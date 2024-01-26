@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cookie from "cookie-parser";
+import cors from 'cors';
 
 
 import productsRouter from './routes/product.routes.js';
@@ -20,6 +21,10 @@ const app = express();
 app.set('port', process.env.PORT || 3000);
 
 //Middlewares
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookie());
