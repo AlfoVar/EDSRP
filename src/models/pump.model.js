@@ -1,13 +1,16 @@
-const mongoose = require('mongoose');
-const {Schema} = mongoose;
+import mongoose from 'mongoose';
 
-const PumpOneSchema = new Schema ({
+const PumpSchema = mongoose.Schema({
+    type:{type:Number, require:true},
     currentGallonCost:{ type: Number, require:true},
     previousRecordGallon:{ type: Number, require:true},
     currentRecordGallon:{type:Number, require:true},
     gallonsSold:{type:Number, require:true},
     saleDay:{type:Number, require:true},
-    date:{type:date, require:true}
+    date:{type:Date, require:true}
+},
+{
+    timestamps:true
 });
 
-module.exports = mongoose.model('PumpOne', PumpOneSchema);
+export default mongoose.model('Pumps', PumpSchema);
