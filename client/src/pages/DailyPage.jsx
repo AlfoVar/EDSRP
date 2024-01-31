@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react"; 
-import FormPump from '../components/formPump.component.jsx';
+import React, { useEffect, useState } from "react";
+import FormPump from "../components/formPump.component.jsx";
 const DailyPage = () => {
   //const soldPumpOne = Intl.NumberFormat().format(3293320);
   //const soldPumpTwo = Intl.NumberFormat().format(1595385);
@@ -21,30 +21,58 @@ const DailyPage = () => {
   const [closeRecordManual, setCloseRecordManual] = useState(0);
   const [soldGallonsManual, setSoldGallonsManual] = useState(0);
   const [totalGallonSaleManual, setTotalGallonSaleManual] = useState(0);
+  //globales
+  const [totalGallons, setTotalGallons] = useState(0);
+  const [totalSale, setTotalSale] = useState(0);
 
   const pumpOneLogics = (prev, closed) => {
-    console.log(prev, closed)
-    setTotalGallonSaleOne(Number.parseFloat(closed-prev).toFixed(1));
-    const totalSale = (totalGallonSaleOne * costGas )
+    console.log(prev, closed);
+    setTotalGallonSaleOne(Number.parseFloat(closed - prev).toFixed(1));
+    const totalSale = totalGallonSaleOne * costGas;
     setSoldGallonsOne(totalSale);
+    // totalGallonsLogics();
   };
 
   const pumpTwoLogics = (prev, closed) => {
-    setTotalGallonSaleTwo(Number.parseFloat(closed-prev).toFixed(1));
-    const totalSale = (totalGallonSaleTwo * costGas )
+    setTotalGallonSaleTwo(Number.parseFloat(closed - prev).toFixed(1));
+    const totalSale = totalGallonSaleTwo * costGas;
     setSoldGallonsTwo(totalSale);
+    //totalGallonsLogics();
   };
 
   const pumpManualLogics = (prev, closed) => {
-    setTotalGallonSaleManual(Number.parseFloat(closed-prev).toFixed(1));
-    const totalSale = (totalGallonSaleManual * costGas )
+    setTotalGallonSaleManual(Number.parseFloat(closed - prev).toFixed(1));
+    const totalSale = totalGallonSaleManual * costGas;
     setSoldGallonsManual(totalSale);
+    //totalGallonsLogics();
   };
 
+  const handleTotalGallonsChange = (id, newTotal) => {
+    setTotalGallons((prevTotalGallons) => ({
+      ...prevTotalGallons,
+      [id]: newTotal,
+    }));
+  };
+
+  const handleTotalSaleChange = (id, newSaleTotal) => {
+    setTotalSale((prevTotalSale) => ({
+      ...prevTotalSale,
+      [id]: newSaleTotal,
+    }));
+  };
+
+  // const totalGallonsLogics = () => {
+  //   const totalGallons = [
+  //     totalGallonSaleManual,
+  //     totalGallonSaleOne,
+  //     totalGallonSaleTwo,
+  //   ].reduce((a, b) => a + b, 0);
+  //   setTotalGallons(totalGallons);
+  // };
   // useEffect(() => {
   //   pumpLogics(prevRecordOne, closeRecordOne);
   // }, [prevRecordOne, closeRecordOne, totalGallonSaleOne]);
- 
+
   return (
     <div>
       <form>
@@ -56,209 +84,58 @@ const DailyPage = () => {
             <p className="mt-1 text-sm leading-6 text-white-600">
               Surtidores Costo galon gasolina $14650
             </p>
-             <FormPump
-            prevRecord={prevRecordOne}
-            setPrevRecord={setPrevRecordOne}
-            closeRecord={closeRecordOne}
-            setCloseRecord={setCloseRecordOne}
-            pumpLogics={pumpOneLogics}
-            totalGallonSale={totalGallonSaleOne}
-            soldGallons={soldGallonsOne}
-            /> 
             <FormPump
-            prevRecord={prevRecordTwo}
-            setPrevRecord={setPrevRecordTwo}
-            closeRecord={closeRecordTwo}
-            setCloseRecord={setCloseRecordTwo}
-            pumpLogics={pumpTwoLogics}
-            totalGallonSale={totalGallonSaleTwo}
-            soldGallons={soldGallonsTwo}
-            /> 
+              id="form1"
+              onTotalGallonsChange={handleTotalGallonsChange}
+              onTotalSaleChange={handleTotalSaleChange}
+              prevRecord={prevRecordOne}
+              setPrevRecord={setPrevRecordOne}
+              closeRecord={closeRecordOne}
+              setCloseRecord={setCloseRecordOne}
+              pumpLogics={pumpOneLogics}
+              totalGallonSale={totalGallonSaleOne}
+              soldGallons={soldGallonsOne}
+            />
             <FormPump
-            prevRecord={prevRecordManual}
-            setPrevRecord={setPrevRecordManual}
-            closeRecord={closeRecordManual}
-            setCloseRecord={setCloseRecordManual}
-            pumpLogics={pumpManualLogics}
-            totalGallonSale={totalGallonSaleManual}
-            soldGallons={soldGallonsManual}
-            /> 
-            {/* <div className="p-5">
-              <p className="mt-2 text-sm leading-6 text-white-600">
-                Surtidor 1 = {`$${Intl.NumberFormat().format(soldGallonsOne)}`}
-              </p>
-              <div className="mt-7 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-1">
-                  <label className="block text-sm font-medium leading-6 text-white-900">
-                    Registro Anterior
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      name="first-name"
-                      id="first-name"
-                      onChange={(e) => {
-                        setPrevRecordOne(Number(e.target.value));
-                      }}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-1">
-                  <label className="block text-sm font-medium leading-6 text-white-900">
-                    Registro Cierre
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      name="last-name"
-                      id="last-name"
-                      onChange={(e) => setCloseRecordOne(Number(e.target.value))}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-1">
-                  <label className="block text-sm font-medium leading-6 text-white-900">
-                    Venta Galones
-                  </label>
-                  <div className="mt-2">
-                    {totalGallonSaleOne}
-                  </div>
-                </div>
-
-                <div className="sm:col-span-1">
-                  <label className="block text-sm font-medium leading-6 text-white-900">
-                    Venta
-                  </label>
-                  <div className="mt-2">{`$${Intl.NumberFormat().format(soldGallonsOne)}`}</div>
-                </div>
-              </div>
-            </div> */}
-            {/* <div className="p-5">
-              <p className="mt-2 text-sm leading-6 text-white-600">
-                Surtidor 2 = $xxxxxxx
-              </p>
-              <div className="mt-7 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-1">
-                  <label className="block text-sm font-medium leading-6 text-white-900">
-                    Registro Anterior
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      name="first-name"
-                      id="first-name"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-1">
-                  <label className="block text-sm font-medium leading-6 text-white-900">
-                    Registro Cierre
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      name="last-name"
-                      id="last-name"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-1">
-                  <label className="block text-sm font-medium leading-6 text-white-900">
-                    Venta Galones
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-1">
-                  <label className="block text-sm font-medium leading-6 text-white-900">
-                    Venta
-                  </label>
-                  <div className="mt-2">{`$${soldPumpTwo}`}</div>
-                </div>
-              </div>
-            </div> */}
-            {/* <div className="p-5">
-              <p className="mt-2 text-sm leading-6 text-white-600">
-                Surtidor Manual = $xxxxxxx
-              </p>
-              <div className="mt-7 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-1">
-                  <label className="block text-sm font-medium leading-6 text-white-900">
-                    Registro Anterior
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      name="first-name"
-                      id="first-name"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-1">
-                  <label className="block text-sm font-medium leading-6 text-white-900">
-                    Registro Cierre
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      name="last-name"
-                      id="last-name"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-1">
-                  <label className="block text-sm font-medium leading-6 text-white-900">
-                    Venta Galones
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-1">
-                  <label className="block text-sm font-medium leading-6 text-white-900">
-                    Venta
-                  </label>
-                  <div className="mt-2">= $3.293.320</div>
-                </div>
-              </div>
-            </div> */}
+              id="form2"
+              onTotalGallonsChange={handleTotalGallonsChange}
+              onTotalSaleChange={handleTotalSaleChange}
+              prevRecord={prevRecordTwo}
+              setPrevRecord={setPrevRecordTwo}
+              closeRecord={closeRecordTwo}
+              setCloseRecord={setCloseRecordTwo}
+              pumpLogics={pumpTwoLogics}
+              totalGallonSale={totalGallonSaleTwo}
+              soldGallons={soldGallonsTwo}
+            />
+            <FormPump
+              id="form3"
+              onTotalGallonsChange={handleTotalGallonsChange}
+              onTotalSaleChange={handleTotalSaleChange}
+              prevRecord={prevRecordManual}
+              setPrevRecord={setPrevRecordManual}
+              closeRecord={closeRecordManual}
+              setCloseRecord={setCloseRecordManual}
+              pumpLogics={pumpManualLogics}
+              totalGallonSale={totalGallonSaleManual}
+              soldGallons={soldGallonsManual}
+            />
             <div>
               <div className="sm:col-span-1">
                 <label className="block text-sm font-medium leading-6 text-white-900">
                   Galones vendidos
                 </label>
-                <div className="mt-2">= $3.293.320</div>
+                <div className="mt-2">
+                  {`= ${Intl.NumberFormat().format(
+                    totalGallons.form1 + totalGallons.form2 + totalGallons.form3
+                  )}`}
+                </div>
               </div>
               <div className="sm:col-span-1">
                 <label className="block text-sm font-medium leading-6 text-white-900">
                   Arqueo
                 </label>
-                <div className="mt-2">= $3.293.320</div>
+                <div className="mt-2">{`$${Intl.NumberFormat().format(totalSale.form1+totalSale.form2)}`}</div>
               </div>
             </div>
           </div>
