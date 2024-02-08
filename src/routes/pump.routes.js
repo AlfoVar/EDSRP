@@ -1,17 +1,19 @@
 import {Router} from 'express';
-import { getPump, getPumpById, addPump, updatePumpById, deletePump } from "../controller/pump.constroler.js";
+import { getPump, getPumpById, getPumpByDate, addPump, updatePumpById, deletePump } from "../controller/pump.constroler.js";
 //import { authValidationToken } from "../middlewares/validateToken.js";
 
 const router = Router();
 
-router.get('/pump', /*authValidationToken,*/ getPump);
+router.get('/', /*authValidationToken,*/ getPump);
 
-router.get('/pump/:id',/*authValidationToken,*/ getPumpById)
+router.get('/:id',/*authValidationToken,*/ getPumpById)
 
-router.post('/pump',/*authValidationToken, */addPump)
+router.get('/:date',/*authValidationToken,*/ getPumpByDate) //TODO: check if this is the correct way to get by date
 
-router.put('/pump/:id',/*authValidationToken,*/ updatePumpById)
+router.post('/',/*authValidationToken, */addPump)
 
-router.delete('/pump/:id',/*authValidationToken,*/ deletePump);
+router.put('/:id',/*authValidationToken,*/ updatePumpById)
+
+router.delete('/:id',/*authValidationToken,*/ deletePump);
 
 export default router;

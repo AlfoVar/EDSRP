@@ -4,33 +4,59 @@ const FormPump = ({
   id,
   prevRecord,
   setPrevRecord,
-  closeRecord,
-  setCloseRecord,
-  pumpLogics,
+  //closeRecord,
+  //setCloseRecord,
+  //pumpLogics,
   totalGallonSale,
-  soldGallons,
+  soldGallonsDay,
   onTotalGallonsChange,
   onTotalSaleChange,
 }) => {
   const [totalGallons, setTotalGallons] = useState(0);
   const [totalSale, setTotalSale] = useState(0);
+  const [soldGallons, setSoldGallons] = useState(0);
+  const [gallonSale, setGallonSale] = useState(0);
+  const [closeRecord, setCloseRecord] = useState(0);
+  const costGas = 14650;
+
+  
+  const pumpLogics = (prev, closed) => {
+    setGallonSale(Number.parseFloat(closed - prev).toFixed(1));
+    const totalSale = gallonSale * costGas;
+    setSoldGallons(totalSale);
+  };
+
+  // const handleTotalGallonsChange = (id, newTotal) => {
+  //   setTotalGallons((prevTotalGallons) => ({
+  //     ...prevTotalGallons,
+  //     [id]: newTotal,
+  //   }));
+  // };
+
+  // const handleTotalSaleChange = (id, newSaleTotal) => {
+  //   console.log(id, "id")
+  //   setTotalSale((prevTotalSale) => ({
+  //     ...prevTotalSale,
+  //     [id]: newSaleTotal,
+  //   }));
+  // };
 
   const handleInputChange = (e, setState) => {
     const value = e.target.value;
     if (/^\d*\.?\d*$/.test(value)) {
       // regex to validate decimal numbers
       setState(value);
-      pumpLogics();
     }
   };
 
   useEffect(() => {
-    const totalGallons = Number(totalGallonSale);
+    const totalGallons = Number(gallonSale);
+    //console.log(totalGallons, "totalGallons")
     onTotalGallonsChange(id, totalGallons)
     const totalSale = Number(soldGallons);
     onTotalSaleChange(id, totalSale)
     pumpLogics(prevRecord, closeRecord);
-  }, [prevRecord, closeRecord, totalGallonSale, soldGallons]);
+  }, [prevRecord, gallonSale, soldGallons, closeRecord]);
 
   return (
     <form>
@@ -83,7 +109,7 @@ const FormPump = ({
             <label className="block text-sm font-medium leading-6 text-white-900">
               Venta Galones
             </label>
-            <div className="mt-2">{totalGallonSale}</div>
+            <div className="mt-2">{gallonSale}</div>
           </div>
 
           <div className="sm:col-span-1">

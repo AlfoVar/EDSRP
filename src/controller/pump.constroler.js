@@ -11,6 +11,11 @@ export const getPumpById = async (req, res) => {
   res.json(pump);
 };
 
+export const getPumpByDate = async (req, res) => {
+  const pump = await modelPump.findById(req.params.date);
+  res.json(pump);
+};
+
 export const addPump = async (req, res) => {
     console.log(req.body)
   const {
@@ -20,6 +25,7 @@ export const addPump = async (req, res) => {
     currentRecordGallon,
     gallonsSold,
     saleDay,
+    date,
   } = req.body;
   const pump = new modelPump({
     type,
@@ -28,6 +34,7 @@ export const addPump = async (req, res) => {
     currentRecordGallon,
     gallonsSold,
     saleDay,
+    date,
   });
   await pump.save();
   res.json({ status: "Surtidor Guardado" });
@@ -41,6 +48,7 @@ export const updatePumpById = async (req, res) => {
     currentRecordGallon,
     gallonsSold,
     saleDay,
+    date,
   } = req.body;
   const pumpUpdate = {
     type,
@@ -49,6 +57,7 @@ export const updatePumpById = async (req, res) => {
     currentRecordGallon,
     gallonsSold,
     saleDay,
+    date,
   };
   await modelPump.findByIdAndUpdate(req.params.id, pumpUpdate);
   res.json({ status: "Surtidor Actualizado" });

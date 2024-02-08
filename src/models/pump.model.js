@@ -7,7 +7,7 @@ const PumpSchema = mongoose.Schema({
     currentRecordGallon:{type:Number, require:true},
     gallonsSold:{type:Number, require:true},
     saleDay:{type:Number, require:true},
-    date:{type:Date, require:true}
+    date:{type:Date, require:true},
 },
 {
     timestamps:true
