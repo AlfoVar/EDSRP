@@ -6,7 +6,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 const DatePickerValue = ({setDateValue}) => {
-  const [value, setValue] = React.useState(dayjs("2024-02-01"))
+  const [value, setValue] = React.useState(dayjs())
   setDateValue(value);
   //console.log(value.format('YYYY-MM-DD') > dayjs().format('YYYY-MM-DD') );
 
