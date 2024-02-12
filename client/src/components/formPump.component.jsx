@@ -4,6 +4,7 @@ const FormPump = ({
   id,
   prevRecord,
   setPrevRecord,
+  closeRecordValidate,
   dateValue,
   onChange,
   onTotalGallonsChange,
@@ -11,7 +12,7 @@ const FormPump = ({
 }) => {
   const [soldGallons, setSoldGallons] = useState(0);
   const [gallonSale, setGallonSale] = useState(0);
-  const [closeRecord, setCloseRecord] = useState(0);
+  const [closeRecord, setCloseRecord] = useState(0);;
   const costGas = 14650;
 
   const pumpLogics = (prev, closed) => {
@@ -32,6 +33,9 @@ const FormPump = ({
     onTotalGallonsChange(id, totalGallons);
     const totalSale = Number(soldGallons);
     onTotalSaleChange(id, totalSale);
+    if(closeRecordValidate != 0 ){
+      setCloseRecord(closeRecordValidate);
+    }
     pumpLogics(prevRecord, closeRecord);
     const bodyPump = {
       type: id,

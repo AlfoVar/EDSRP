@@ -17,50 +17,50 @@ export const PumpContextProvider = (props) => {
   const fetchPumps = async () => {
     try {
       const response = await getPumpData();
-     // console.log(response.data);
       setPumps(response.data);
     } catch (error) {
       console.error(error);
     }
   };
 
-  // const getPumpByDate = async (date) => {
-  //   try {
-  //     const response = await getPumpDataByDate(date);
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
+  const getPumpByDate = async (date) => {
+    try {
+      const response = await getPumpDataByDate(date);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
-  // const addPump = async (newPump) => {
-  //   try {
-  //     const response = await createPump(newPump);
-  //     setPumps([...pumps, response.data]);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+  const addPump = async (newPump) => {
+    console.log(newPump);
+    try {
+      const response = await createPump(newPump);
+      setPumps([...pumps, response.data]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  // const updatePump = async (id, updatedPump) => {
-  //   try {
-  //     const response = await updatePumpData(id, updatedPump);
-  //     setPumps(
-  //       pumps.map((pump) => (pump._id === id ? response.data : pump))
-  //     );
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+  const updatePump = async (id, updatedPump) => {
+    try {
+      const response = await updatePumpData(id, updatedPump);
+      setPumps(
+        pumps.map((pump) => (pump._id === id ? response.data : pump))
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  // const deletePump = async (id) => {
-  //   try {
-  //     await deletePumpData(id);
-  //     setPumps(pumps.filter((pump) => pump._id !== id));
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+  const deletePump = async (id) => {
+    try {
+      await deletePumpData(id);
+      setPumps(pumps.filter((pump) => pump._id !== id));
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     fetchPumps();
@@ -69,10 +69,10 @@ export const PumpContextProvider = (props) => {
   return (
     <PumpContext.Provider value={{ 
       pumps, 
-      // getPumpByDate, 
-      // addPump,
-      // updatePump, 
-      // deletePump 
+      getPumpByDate, 
+      addPump,
+      updatePump, 
+      deletePump 
       }}>
       {props.children}
     </PumpContext.Provider>

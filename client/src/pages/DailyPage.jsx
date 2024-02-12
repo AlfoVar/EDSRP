@@ -4,22 +4,26 @@ import { usePump, PumpContextProvider } from "../context/PumpContext.jsx";
 import DatePickerValue from "../components/datePicker.jsx";
 import dayjs from "dayjs";
 import { set } from "mongoose";
+import { isValid } from "zod";
 
 const DailyPage = () => {
   const pumpsContext = usePump();
 
   const [prevRecord, setPrevRecord] = useState(0);
+  const [closeRecord, setCloseRecord] = useState(0);
   const [totalGallons, setTotalGallons] = useState([]);
   const [totalSale, setTotalSale] = useState(0);
   const [dateValue, setDateValue] = useState(dayjs());
-  const [pumpsYesterday, setPumpsYesterday] = useState([]);
+  const [pumpsDataValidate, setPumpsDataValidate] = useState([]);
   const [totalGallonsDay, setTotalGallonsDay] = useState(0);
   const [totalSaleDay, setTotalSaleDay] = useState(0);
 
-  const [dataEjemplo, setDataEjemplo] = useState({});
+  const [isToday, setIsToday] = useState(false);
+
+  const [dataPumps, setDataPumps] = useState([]);
 
   const handlePumpDataChange = (id, newPumpData) => {
-    setDataEjemplo((prevData) => ({
+    setDataPumps((prevData) => ({
       ...prevData,
       [id]: newPumpData,
     }));
@@ -41,31 +45,100 @@ const DailyPage = () => {
     setTotalSaleDay(totalSale[1] + totalSale[2] + totalSale[3]);
   };
 
-  const saveRegisterPump = (event) => {
+  const pruebaData = (data) => {
+    console.log(data);
+  };
+
+  const saveRegisterPump = async (event) => {
+    var counter = 0;
+    var size = Object.keys(dataPumps).length;
     event.preventDefault();
-    console.log(dataEjemplo);
+    for (const [key, value] of Object.entries(dataPumps)) {
+      //console.log(`${key}: ${value}`);
+      const prueba = {
+        type: key,
+        date: dateValue.format("YYYY-MM-DD"),
+        currentRecordGallon: value.currentRecordGallon,
+        previousRecordGallon: value.previousRecordGallon,
+        gallonsSold: value.gallonsSold,
+        saleDay: value.saleDay,
+        currentGallonCost: value.currentGallonCost,
+      };
+      pruebaData(prueba);
+      await pumpsContext.addPump({
+        type: key,
+        date: dateValue.format("YYYY-MM-DD"),
+        currentRecordGallon: value.currentRecordGallon,
+        previousRecordGallon: value.previousRecordGallon,
+        gallonsSold: value.gallonsSold,
+        saleDay: value.saleDay,
+        currentGallonCost: value.currentGallonCost,
+      });
+      counter++;
+    }
+  };
+
+  const filterByDate = (data, date) => {
+    const inputDateYesterday = new Date(date);
+    const filteredData = data.filter((item) => {
+      const itemDate = new Date(item.date);
+      return (
+        itemDate.getFullYear() === inputDateYesterday.getFullYear() &&
+        itemDate.getMonth() === inputDateYesterday.getMonth() &&
+        itemDate.getDate() === inputDateYesterday.getDate()
+      );
+    });
+
+    return filteredData;
+  };
+
+
+  const resultPumpsYesterday = filterByDate(
+    pumpsContext.pumps,
+    dateValue.add(-1, "day").format("YYYY-MM-DD")
+  );
+
+  const resultPumpsToday = filterByDate(
+    pumpsContext.pumps,
+    dateValue.format("YYYY-MM-DD")
+  );
+
+  const validateDataPumpsDate = (data) => {
+    const dateToday = new Date(dateValue.format("YYYY-MM-DD"));
+    const isTodayData = data.find((registro) => {
+      const date = new Date(registro.date);
+      return date.getDate() === dateToday.getDate() ;
+    })
+    if (isTodayData) {
+      setIsToday(true);
+      setPumpsDataValidate(resultPumpsToday);
+    } else {
+      setIsToday(false);
+      setPumpsDataValidate(resultPumpsYesterday);
+    }
   };
 
   useEffect(() => {
-    const filterByDate = (data, date) => {
-      const inputDate = new Date(date);
-      const filteredData = data.filter((item) => {
-        const itemDate = new Date(item.date);
-        return (
-          itemDate.getFullYear() === inputDate.getFullYear() &&
-          itemDate.getMonth() === inputDate.getMonth() &&
-          itemDate.getDate() === inputDate.getDate()
-        );
-      });
+    // const filterByDate = (data, dateYes) => {
+    //   const inputDateYesterday = new Date(dateYes);
+    //   const filteredData = data.filter((item) => {
+    //     const itemDate = new Date(item.date);
+    //     return (
+    //       itemDate.getFullYear() === inputDateYesterday.getFullYear() &&
+    //       itemDate.getMonth() === inputDateYesterday.getMonth() &&
+    //       itemDate.getDate() === inputDateYesterday.getDate()
+    //     );
+    //   });
 
-      return filteredData;
-    };
-    const resultPumpsYesterday = filterByDate(
-      pumpsContext.pumps,
-      dateValue.add(-1, "day").format("YYYY-MM-DD")
-    );
-    setPumpsYesterday(resultPumpsYesterday);
-  }, [pumpsContext, dateValue, dataEjemplo]);
+    //   return filteredData;
+    // };
+
+    // const resultPumpsYesterday = filterByDate(
+    //   pumpsContext.pumps,
+    //   dateValue.add(-1, "day").format("YYYY-MM-DD")
+    // );
+    validateDataPumpsDate(pumpsContext.pumps);
+  }, [pumpsContext, dateValue, dataPumps, isToday]);
 
   return (
     <div>
@@ -79,20 +152,24 @@ const DailyPage = () => {
             <p className="mt-1 text-sm leading-6 text-white-600">
               Surtidores Costo galon gasolina $14650
             </p>
-            {pumpsYesterday.map((pump, i) => {
+            {
+            pumpsDataValidate.map((pump, i) => {
+              const dateToday = new Date(dateValue.format("YYYY-MM-DD")).getDate();
+              const date = new Date(pump.date).getDate();
+              var isTodayValidate = date === dateToday;
               return (
                 <FormPump
                   key={i}
                   id={pump.type}
                   onChange={handlePumpDataChange}
-                  prevRecord={pump.currentRecordGallon}
+                  prevRecord={isToday ? pump.previousRecordGallon : pump.currentRecordGallon}
                   setPrevRecord={setPrevRecord}
+                  closeRecordValidate ={isToday  ? pump.currentRecordGallon : 0}
                   totalGallonsSale={setTotalGallonsDay}
                   totalSale={setTotalSaleDay}
                   onTotalSaleChange={handleTotalSaleChange}
                   onTotalGallonsChange={handleTotalGallonsChange}
-                  dateValue={dateValue.format("YYYY-MM-DD")} // Fix: Added the assignment operator (=) between dateValue and setDateValue
-                  // soldGallons={setTotalSale}
+                  dateValue={dateValue.format("YYYY-MM-DD")}
                 />
               );
             })}
@@ -115,7 +192,7 @@ const DailyPage = () => {
                 </div>
               </div>
             </div>
-            <button onClick={saveRegisterPump} className="">
+            <button disabled={isToday ? true : false} onClick={saveRegisterPump} className="">
               Guardar
             </button>
           </div>
