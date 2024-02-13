@@ -1,0 +1,59 @@
+{
+    "_id": "s14gf45da24d54as21d5",
+    "grocer": {
+        "_id": "65cb89dbaefd4476332c4cb6",
+        "nameGrocer": "Jonathan",
+        "ccGrocer": 1014253686
+    },
+    "date": "04/09/2023",
+    "gas": {
+        "CurrentCostGallon": 14650,
+        "pump": [
+            {
+                "_id": "65cb89186856e69d57fe8a7a",
+                "type": 1,
+                "previousRecordGallon": 823259.6,
+                "currentRecordGallon": 823293.7,
+                "gallonsSold": 34.1,
+                "saleDay": 499565
+            },
+            {
+                "_id": "65cb89236856e69d57fe8a7c",
+                "type": 2,
+                "previousRecordGallon": 877849,
+                "currentRecordGallon": 878082.7,
+                "gallonsSold": 233.7,
+                "saleDay": 3423705
+            },
+            {
+                "_id": "65cb892b6856e69d57fe8a7e",
+                "type": 3,
+                "previousRecordGallon": 8820.1,
+                "currentRecordGallon": 8820.1,
+                "gallonsSold": 0,
+                "saleDay": 0
+            }
+        ],
+        "StockBeforeGas": 2831.5,
+        "TotalGallonsSoldsDay": 267.8,
+        "StockAfterGast": 2563.7,
+        "cashInBoxGas": 3923270
+    },
+    "closingProduct": [
+        {
+            "Product": {
+                "ProductName": "MOBIL 2T-PINTA",
+                "ProductId": "a11d21as121sd1a",
+                "currentCost": 15000,
+                "description": "”Linea de aceite dos tiempos”"
+            },
+            "stockBefore": 34,
+            "soldProducts": 10,
+            "stockAfter": 24,
+            "cashInBox": 150000
+        }
+    ],
+    "closingTotalDay": 12720150,
+    "cashValueTody": 10320000,
+    "surplusOfDay": 212850
+}

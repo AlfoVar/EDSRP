@@ -9,6 +9,9 @@ import cors from 'cors';
 import productsRouter from './routes/product.routes.js';
 import authRouter from './routes/auth.routes.js';
 import pumpRouter from './routes/pump.routes.js';
+import closingProductRoutes from './routes/closingProduct.routes.js';
+import grocerRouter from './routes/grocer.routes.js';
+import closingGasRouters from './routes/closingGas.routes.js';
 
 import mongoose from './database.js';
 
@@ -31,7 +34,10 @@ app.use(express.json());
 app.use(cookie());
 
 //Routes
-app.use('/api/pump', pumpRouter)
+app.use('/api/closinggas', closingGasRouters);
+app.use('/api/grocer', grocerRouter);
+app.use('/api/closingproducts', closingProductRoutes);
+app.use('/api/pump', pumpRouter);
 app.use('/api/product', productsRouter);
 app.use('/api',authRouter);
 

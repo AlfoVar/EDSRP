@@ -2,7 +2,6 @@ import modelPump from "../models/pump.model.js";
 
 export const getPump = async (req, res) => {
   const pump = await modelPump.find();
-  console.log(pump);
   res.json(pump);
 };
 
@@ -17,7 +16,6 @@ export const getPumpByDate = async (req, res) => {
 };
 
 export const addPump = async (req, res) => {
-    console.log(req.body)
   const {
     type,
     currentGallonCost,
