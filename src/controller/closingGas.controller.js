@@ -15,10 +15,10 @@ export const createClosingGas = async (req, res) => {
 // Get all closingGas entries
 export const getAllClosingGas = async (req, res) => {
   try {
-    const closingGasEntries = await ClosingGas.find();
+    const closingGasEntries = await ClosingGas.find().populate('Pumps'); 
     res.status(200).json(closingGasEntries);
   } catch (error) {
-    res.status(500).json({ error: 'An error occurred while retrieving the closingGas entries' });
+    res.status(500).json({ error: error.message});
   }
 };
 

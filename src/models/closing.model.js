@@ -3,7 +3,7 @@ const {Schema} = mongoose;
 
 const closingSchema = new Schema ({
     grocer:{ type: Schema.Types.ObjectId, ref: 'Grocer'},
-    date:{type:date, require:true},
+    date:{type:Date, require:true},
     gas:{ type: Schema.Types.ObjectId, ref: 'closingGas'},
     closingProducts:[{ type: Schema.Types.ObjectId, ref: 'closingProduct'}],
     closingTotalDay:{type:Number, require:true},
@@ -11,4 +11,4 @@ const closingSchema = new Schema ({
     surplusOfDay:{type:Number, require:true},
 });
 
-module.exports = mongoose.model('Closing', closingSchema);
+export default mongoose.model('Closing', closingSchema);

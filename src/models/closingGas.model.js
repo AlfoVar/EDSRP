@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
+const Schema = mongoose.Schema;
 
-const closingGas = new mongoose.Schema ({
+const closingGas = new Schema ({
     currentCostGallon:{ type: Number, require:true},
-    pump: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pump'}],
+    Pumps: [{ type: Schema.Types.ObjectId, ref: 'Pumps'}],
     stockBeforeGas:{ type: Number, require:true},
     totalGallonsSoldDay:{ type: Number, require:true},
     stockAfterGas:{ type: Number, require:true},

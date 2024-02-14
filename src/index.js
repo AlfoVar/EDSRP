@@ -12,6 +12,7 @@ import pumpRouter from './routes/pump.routes.js';
 import closingProductRoutes from './routes/closingProduct.routes.js';
 import grocerRouter from './routes/grocer.routes.js';
 import closingGasRouters from './routes/closingGas.routes.js';
+import closingRouter from './routes/closing.routes.js';
 
 import mongoose from './database.js';
 
@@ -34,6 +35,7 @@ app.use(express.json());
 app.use(cookie());
 
 //Routes
+app.use('/api/closing', closingRouter);
 app.use('/api/closinggas', closingGasRouters);
 app.use('/api/grocer', grocerRouter);
 app.use('/api/closingproducts', closingProductRoutes);
