@@ -8,7 +8,6 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 const DatePickerValue = ({setDateValue}) => {
   const [value, setValue] = React.useState(dayjs())
   setDateValue(value);
-  //console.log(value.format('YYYY-MM-DD') > dayjs().format('YYYY-MM-DD') );
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>

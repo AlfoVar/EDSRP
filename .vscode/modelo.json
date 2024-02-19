@@ -1,12 +1,13 @@
 {
-    "_id": "s14gf45da24d54as21d5",
+    "_id": "65cceb8a317317f268a5cc2b",
     "grocer": {
         "_id": "65cb89dbaefd4476332c4cb6",
         "nameGrocer": "Jonathan",
         "ccGrocer": 1014253686
     },
-    "date": "04/09/2023",
+    "date": "2023-04-09T05:00:00.000Z",
     "gas": {
+        "_id": "65cce39322651f3d6fbbb96a",
         "CurrentCostGallon": 14650,
         "pump": [
             {

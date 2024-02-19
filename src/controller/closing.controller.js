@@ -19,7 +19,7 @@ export const createClosing = async (req, res) => {
 
         res.status(201).json(savedClosing);
     } catch (error) {
-        res.status(500).json({ error: 'An error occurred while creating the closing' });
+        res.status(500).json({ error: 'An error occurred while creating the closing nooo' });
     }
 };
 
@@ -37,6 +37,29 @@ export const getAllClosings = async (req, res) => {
     }
 };
 
+export const getClosingsByDate = async (req, res) => {
+    try {
+        const date = new Date(req.params.date);
+        console.log(date)
+        const closings = await Closing.find({
+            "$expr": {
+                "$and": [
+                  { $eq: [{ $year: "$date" }, { $year: new Date(date) }]},
+                  { $eq: [{ $month: "$date" }, { $month: new Date(date) }]},
+                  { $eq: [{ $dayOfMonth: "$date" }, { $dayOfMonth: new Date(date) }]}
+                ]
+              }
+        }).populate('grocer').populate({
+            path: 'gas',
+            populate: { path: 'Pumps' }
+        });
+
+        res.status(200).json(closings);
+    } catch (error) {
+        res.status(500).json({error: error.message});   
+       // res.status(500).json({ error: 'An error occurred while retrieving the closings' });
+    }
+};
 // Retrieve a single closing by ID
 export const getClosingById = async (req, res) => {
     try {
