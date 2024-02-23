@@ -18,7 +18,6 @@ const DailyPage = () => {
   const closingGasContext = useClosingGasConstext();
 
   const [prevRecord, setPrevRecord] = useState(0);
-  const [closeRecord, setCloseRecord] = useState(0);
   const [totalGallons, setTotalGallons] = useState([]);
   const [totalSale, setTotalSale] = useState(0);
   const [dateValue, setDateValue] = useState(dayjs());
@@ -32,7 +31,6 @@ const DailyPage = () => {
   const [stockGasToday, setStockGasToday] = useState(0);
   const [stockAfterGast, setStockAfterGast] = useState(0);
   const [listPumpsIdsSaved, setListPumpsIdsSaved] = useState([{}]);
-  const [idClogingGas, setIdClogingGas] = useState(0);
 
   const [isToday, setIsToday] = useState(false);
 
@@ -66,8 +64,6 @@ const DailyPage = () => {
     setStockGasToday(totalGasAfter);
   };
 
-  const getStockAfterGast = async () => {};
-
   const saveRegisterPump = async (event) => {
     var listPumpsIds = [];
     var counter = 0;
@@ -80,28 +76,70 @@ const DailyPage = () => {
         gallonsSold: value.gallonsSold,
         saleDay: value.saleDay,
         currentGallonCost: value.currentGallonCost,
+      })
+      .then ( async res => {
+        const resId = await res.pump;
+        listPumpsIds.push(resId._id);
+      })
+      .catch( async error => {
+        console.log(error, "Se genero un problema guardando uno de los surtidores porfavor intente de nuevo.")
+        if (listPumpsIds.length > 0) {
+         await deleteData(listPumpsIds)
+        }
       });
-      const resId = await res.pump;
-      listPumpsIds.push(resId._id);
+      // if (res === "error") {
+      //   console.log("error", "Se genero un problema guardando uno de los surtidores porfavor intente de nuevo.")
+      //   if (listPumpsIds.length > 0) {
+      //     await deleteData(listPumpsIds)
+      //   }
+      //   break
+      // }
+      
       counter++;
     }
-    setListPumpsIdsSaved(listPumpsIds);
     saveClosingGas(listPumpsIds);
   };
+  
+  const deleteData = async (listPump, closingGasID, closingID) => {
+    if (closingID) {
+      await closingGasContext.deleteGas(closingGasID)
+      console.log("Se elimino el cierre")
+    } 
+    if (closingGasID) {
+      await closingGasContext.deleteGas(closingGasID)
+      console.log("Se elimino el cierre de gasolina")
+    } 
+    if (listPump.length > 0) {
+      for (let pumpId of listPump) {
+        await pumpsContext.deletePump(pumpId);
+        console.log( "Se eliminaron las mangeras")
+      }  
+    }
+    return
+  }
 
   const saveClosingGas = async (listPump) => {
-    const res = await closingGasContext.addClosingGasData({
+    await closingGasContext.addClosingGasData({
       Pumps: listPump,
       stockBeforeGas: stockAfterGast,
       totalGallonsSoldDay: totalGallonsDay,
       stockAfterGas: stockGasToday,
       cashInBoxGas: totalSaleDay,
+    })
+    .then( async res => {
+      console.log("Se guardo el cierre de gasolina")
+      await saveClosingDay(listPump, res._id);
+      return res
+    })
+    .catch(async err => {
+      await deleteData(listPump)
+      console.log(" Se genero un error guardando el cierre de gasolina")
+      return
     });
-    saveClosingDay(res._id);
   };
 
-  const saveClosingDay = async (gasId) => {
-    const res = await closingContext.addClosing({
+  const saveClosingDay = async (listPump, gasId) => {
+    await closingContext.addClosing({
       grocer: valueGrocer,
       date: dateValue.format("YYYY-MM-DD"),
       gas: gasId,
@@ -109,49 +147,23 @@ const DailyPage = () => {
       closingTotalDay: 7315660,
       cashValueToday:  7213000 , 
       surplusOfDay: 102340 
+    })
+    .then(res => {
+      console.log(res);
+    })
+    .catch(async error => {
+      await deleteData(listPump, gasId)
+      console.log(" Se genero un error guardando el cierre")
+      return
     });
-    console.log(res);
+    // if (res === "error") {
+    //   await deleteData(listPump, gasId)
+    //   console.log("Se genero un error guardando el cierre")
+    //   return
+    // }
+    
   };
 
-  const functPruebaReturnClosingGas = async (event) => {
-    event.preventDefault();
-    console.log(dataGas);
-    const closignGasData = await setGasClosingData();
-    console.log("1. ", closignGasData);
-
-    setDataClosingGas(closignGasData);
-    // const
-
-    //   const getClosingGasByID = getGasClosing(IdGas)
-    // .then(dataGas => {
-    //   console.log(dataGas);
-    //   return dataGas;// haz algo con dataGas
-    // })
-    // .catch(error => {
-    //   console.error(error); // maneja cualquier error
-    // });
-
-    console.log("2. ", dataGas, dataGasId);
-
-    // getClosingGasByID.map((gas, i) => {
-    //   setDataGas(gas);
-    //   setDataGasId(gas._id);
-    // });
-
-    // console.log(dataGasId, dataGas)
-
-    const valueGasbeforeGallons = gasStoreGallonsLogic();
-
-    console.log("3. ", valueGasbeforeGallons);
-  };
-
-  const setDataClosingGas = (Data) => {
-    console.log(Data);
-    Data.map((gas, i) => {
-      setDataGas(gas);
-      setDataGasId(gas._id);
-    });
-  };
 
   const getPumpsCreated = async () => {
     const dataPumps = await pumpsContext.getPumps();
@@ -162,11 +174,6 @@ const DailyPage = () => {
     } else {
       getPumpsCreated();
     }
-  };
-
-  const getGasClosing = async (Id) => {
-    const dataGas = await dataGas.filterById(Id);
-    return dataGas;
   };
 
   const setGasClosingData = async () => {
@@ -191,16 +198,6 @@ const DailyPage = () => {
 
     return filteredData;
   };
-
-  // const resultPumpsYesterday = filterByDate(
-  //   pumpsContext.pumps,
-  //   dateValue.add(-1, "day").format("YYYY-MM-DD")
-  // );
-
-  // const resultPumpsToday = filterByDate(
-  //   pumpsContext.pumps,
-  //   dateValue.format("YYYY-MM-DD")
-  // );
 
   const getClosingDataContext = async () => {
     const dataDate = await closingContext.getClosingsByDate(
@@ -325,13 +322,6 @@ const DailyPage = () => {
                   <button
                     disabled={isToday ? true : false}
                     onClick={saveRegisterPump}
-                    className=""
-                  >
-                    Guardar
-                  </button>
-                  <button
-                    disabled={isToday ? true : false}
-                    onClick={functPruebaReturnClosingGas}
                     className=""
                   >
                     Guardar

@@ -39,7 +39,7 @@ export const getClosingGasById = async (req, res) => {
 // Update a closingGas entry by ID
 export const updateClosingGasById = async (req, res) => {
   try {
-    const closingGas = await closingGas.findByIdAndUpdate(req.params.id, req.body, {
+    const closingGas = await ClosingGas.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
@@ -54,8 +54,9 @@ export const updateClosingGasById = async (req, res) => {
 
 // Delete a closingGas entry by ID
 export const deleteClosingGasById = async (req, res) => {
+ 
   try {
-    const closingGas = await closingGas.findByIdAndDelete(req.params.id);
+    const closingGas = await ClosingGas.findByIdAndDelete(req.params.id);
     if (!closingGas) {
       return res.status(404).json({ error: 'ClosingGas entry not found' });
     }

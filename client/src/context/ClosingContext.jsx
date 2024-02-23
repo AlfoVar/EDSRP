@@ -23,7 +23,7 @@ export const ClosingContextProvider = ({ children }) => {
       const response = await getClosingData();
       setClosings(response.data);
     } catch (error) {
-      console.error(error);
+      throw error
     }
   };
 
@@ -33,9 +33,7 @@ export const ClosingContextProvider = ({ children }) => {
       const closingsByDay = await getClosingDataByDate(dateClosing);
       setClosings(closingsByDay.data);
     } catch (error) {
-      const errorData = error.response.data;
-      console.log(errorData.message);
-      setErrors(errorData.message);
+      throw error
     }
   };
 
@@ -47,9 +45,19 @@ export const ClosingContextProvider = ({ children }) => {
       console.log(response.data);
       return response.data;
     } catch (error) {
-      console.error(error);
+     throw error
     }
   };
+
+  // const deleteGas = async (id) => {
+  //   try {
+  //     await deleteClosingGas(id);
+  //     setGasData(gasData.filter((gas) => gas._id !== id));
+  //   } catch (error) {
+  //     const errorData = error.response.data;
+  //     setErrors(errorData.message);
+  //   }
+  // };
 
   useEffect(() => {
     fetchClosing();

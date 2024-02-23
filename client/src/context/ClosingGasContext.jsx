@@ -3,6 +3,7 @@ import {
   getClosingGas,
   createClosingGas,
   getClosingGasById,
+  deleteClosingGas
 } from "../api/closingGas";
 
 // Create the ClosingGasContext
@@ -26,7 +27,7 @@ export const ClosingGasProvider = ({ children }) => {
       const response = await getClosingGas();
       setClosingGasData(response.data);
     } catch (error) {
-      console.error(error);
+      throw error
     }
   };
 
@@ -35,7 +36,7 @@ export const ClosingGasProvider = ({ children }) => {
       const response = await getClosingGasById(gasId);
       setClosingGasData(response.data);
     } catch (error) {
-      console.error(error);
+      throw error
     }
   };
 
@@ -50,14 +51,22 @@ export const ClosingGasProvider = ({ children }) => {
       console.log(response.data);
       return response.data;
     } catch (error) {
-      console.error(error);
+      throw error
     }
   };
+
+  const deleteGas = async (id) => {
+      try {
+        const res = await deleteClosingGas(id);
+        return res;
+      } catch (error) {
+        throw error
+      }
+    };
 
   useEffect(() => {
     fetchClosingGas();
   }, []);
-  // Provide the state and functions/methods to the children components
   return (
     <ClosingGasContext.Provider
       value={{
@@ -65,6 +74,7 @@ export const ClosingGasProvider = ({ children }) => {
         setClosingGasData,
         addClosingGasData,
         getClosingGasDataById,
+        deleteGas,
       }}
     >
       {children}

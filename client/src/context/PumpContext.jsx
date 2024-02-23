@@ -19,7 +19,7 @@ export const PumpContextProvider = (props) => {
       const response = await getPumpData();
       setPumps(response.data);
     } catch (error) {
-      console.error(error);
+      throw error
     }
   };
 
@@ -28,7 +28,7 @@ export const PumpContextProvider = (props) => {
       const response = await getPumpDataByDate(date);
       return response.data;
     } catch (error) {
-      console.error(error);
+      throw error
     }
   }
 
@@ -38,7 +38,7 @@ export const PumpContextProvider = (props) => {
       setPumps([...pumps, response.data]);
       return response.data;
     } catch (error) {
-      console.error(error);
+      throw error
     }
   };
 
@@ -49,7 +49,7 @@ export const PumpContextProvider = (props) => {
         pumps.map((pump) => (pump._id === id ? response.data : pump))
       );
     } catch (error) {
-      console.error(error);
+      throw error
     }
   };
 
@@ -58,7 +58,7 @@ export const PumpContextProvider = (props) => {
       await deletePumpData(id);
       setPumps(pumps.filter((pump) => pump._id !== id));
     } catch (error) {
-      console.error(error);
+      throw error
     }
   };
 
