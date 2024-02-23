@@ -34,8 +34,8 @@ export const addPump = async (req, res) => {
     saleDay,
     date,
   });
-  await pump.save();
-  res.json({ status: "Surtidor Guardado" });
+  const savedPump = await pump.save();
+  res.json({ status: "Surtidor Guardado",  pump: savedPump });
 };
 
 export const updatePumpById = async (req, res) => {

@@ -33,10 +33,10 @@ export const PumpContextProvider = (props) => {
   }
 
   const addPump = async (newPump) => {
-    console.log(newPump);
     try {
       const response = await createPump(newPump);
       setPumps([...pumps, response.data]);
+      return response.data;
     } catch (error) {
       console.error(error);
     }

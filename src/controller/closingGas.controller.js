@@ -4,7 +4,6 @@ import ClosingGas from '../models/closingGas.model.js';
 export const createClosingGas = async (req, res) => {
   try {
     const closingGas = new ClosingGas(req.body);
-    console.log(closingGas)
     await closingGas.save();
     res.status(201).json(closingGas);
   } catch (error) {
@@ -24,8 +23,10 @@ export const getAllClosingGas = async (req, res) => {
 
 // Get a single closingGas entry by ID
 export const getClosingGasById = async (req, res) => {
+  console.log(req.params.id)
   try {
-    const closingGas = await closingGas.findById(req.params.id);
+    const closingGas = await ClosingGas.findById(req.params.id).populate('Pumps');
+    console.log(closingGas)
     if (!closingGas) {
       return res.status(404).json({ error: 'ClosingGas entry not found' });
     }

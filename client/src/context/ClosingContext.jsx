@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import {getClosingData ,getClosingDataByDate} from "../api/closing";
+import {
+  getClosingData,
+  getClosingDataByDate,
+  createClosing,
+} from "../api/closing";
 
 export const ClosingContext = createContext();
 
@@ -24,7 +28,7 @@ export const ClosingContextProvider = ({ children }) => {
   };
 
   const getClosingsByDate = async (dateClosing) => {
-    console.log(dateClosing)
+    console.log(dateClosing);
     try {
       const closingsByDay = await getClosingDataByDate(dateClosing);
       setClosings(closingsByDay.data);
@@ -35,12 +39,26 @@ export const ClosingContextProvider = ({ children }) => {
     }
   };
 
+  const addClosing = async (closingData) => {
+    console.log("context", closingData)
+    try {
+      const response = await createClosing(closingData);
+      setClosings((prevClosingData) => [...prevClosingData, response.data]);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     fetchClosing();
   }, []);
-  
+
   return (
-    <ClosingContext.Provider value={{ closings, getClosingsByDate }}>
+    <ClosingContext.Provider
+      value={{ closings, getClosingsByDate, addClosing }}
+    >
       {children}
     </ClosingContext.Provider>
   );

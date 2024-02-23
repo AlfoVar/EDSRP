@@ -5,7 +5,7 @@ export const getGrocers = async () => {
 };
 
 export const getGrocerDataById = async (grocerId) => {
-  return axios.get(`/closing/${grocerId}`);
+  return axios.get(`/grocer/${grocerId}`);
 };
 
 export const createGrocer = async (grocerData) => {
@@ -13,9 +13,9 @@ export const createGrocer = async (grocerData) => {
 };
 
 export const updateGrocer = async (grocerId, grocerData) => {
-  return axios.put(`/closing/${grocerId}`, grocerData);
+  return axios.put(`/grocer/${grocerId}`, grocerData);
 };
 
 export const deleteGrocerData = async (grocerId) => {
-  return axios.delete(`/closing/${grocerId}`);
+  return axios.delete(`/grocer/${grocerId}`);
 };
