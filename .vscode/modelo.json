@@ -42,16 +42,16 @@
     },
     "closingProduct": [
         {
-            "Product": {
-                "ProductName": "MOBIL 2T-PINTA",
-                "ProductId": "a11d21as121sd1a",
+            "product": {
+                "nameProduct": "MOBIL 2T-PINTA",
+                "idProduct": "a11d21as121sd1a",
                 "currentCost": 15000,
-                "description": "”Linea de aceite dos tiempos”"
+                "description": "Linea de aceite dos tiempos para Lanchas fuera de borda",
+                "stock": 24
             },
             "stockBefore": 34,
             "soldProducts": 10,
-            "stockAfter": 24,
-            "cashInBox": 150000
+            "stockAfter": 24
         }
     ],
     "closingTotalDay": 12720150,

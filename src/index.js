@@ -40,7 +40,7 @@ app.use('/api/closinggas', closingGasRouters);
 app.use('/api/grocer', grocerRouter);
 app.use('/api/closingproducts', closingProductRoutes);
 app.use('/api/pump', pumpRouter);
-app.use('/api/product', productsRouter);
+app.use('/api/products', productsRouter);
 app.use('/api',authRouter);
 
 //Static files 

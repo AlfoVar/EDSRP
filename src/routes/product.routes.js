@@ -4,14 +4,17 @@ import { authValidationToken } from "../middlewares/validateToken.js";
 
 const router = Router();
 
-router.get('/products', authValidationToken, getProducts);
+//Esta es la forma para colocar la validacion del token en la llamadas a las rutas
+// --> router.get('/', authValidationToken, getProducts);
 
-router.get('/products/:id',authValidationToken, getProductById)
+router.get('/', getProducts);
 
-router.post('/products',authValidationToken, addProduct)
+router.get('/:id', getProductById)
 
-router.put('/products/:id',authValidationToken, updateProductById)
+router.post('/', addProduct)
 
-router.delete('/products:id',authValidationToken, deleteProduct);
+router.put('/:id', updateProductById)
+
+router.delete('/:id', deleteProduct);
 
 export default router;

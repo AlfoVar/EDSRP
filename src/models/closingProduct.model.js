@@ -6,7 +6,6 @@ const closingProductSchema = new Schema ({
     stockBefore:{ type: Number, require:true},
     soldProducts:{type:Number, require:true},
     stockAfter:{type:Number, require:true},
-    cashInBox:{type:Number, require:true}
 });
 
 export default mongoose.model('closingProduct', closingProductSchema);

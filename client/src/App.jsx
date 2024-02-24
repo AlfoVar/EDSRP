@@ -5,6 +5,7 @@ import { PumpContextProvider } from "./context/PumpContext";
 import { ClosingContextProvider } from "./context/ClosingContext";
 import { GrocerProvider } from "./context/grocerContext";
 import { ClosingGasProvider } from "./context/ClosingGasContext";
+import { ProductProvider } from './context/ProductContext';
 
 import AdminUsersPage from "./pages/AdminUsersPage";
 import LoginPage from "./pages/LoginPage";
@@ -21,10 +22,12 @@ function App() {
           <ClosingContextProvider>
             <ClosingGasProvider>
               <GrocerProvider>
+                <ProductProvider>
                 <Routes>
                   <Route path="/" element={<h1>Home Page</h1>} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/daily" element={<DailyPage />} />
+                  <Route path="/products" element={<ProductsPage />} />
                   <Route element={<ProtectedRoute />}>
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/adminuser" element={<AdminUsersPage />} />
@@ -32,6 +35,7 @@ function App() {
                     <Route path="/getdaily/:id" element={<DailyPage />} />
                   </Route>
                 </Routes>
+                </ProductProvider>
               </GrocerProvider>
             </ClosingGasProvider>
           </ClosingContextProvider>
