@@ -25,13 +25,32 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
+  const addProduct  = async (newProduct) => {
+    try {
+      const response = await createProducts(newProduct);
+      setProducts([...products, response.data]);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  const updateProduct = async (id, updatedProduct) => {
+    try {
+      const response = await updateProducts(id, updatedProduct);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Fetch products from the API
   useEffect(() => {
     fetchProducts();
   }, []);
 
   return (
-    <ProductContext.Provider value={products}>
+    <ProductContext.Provider value={{products, addProduct, updateProduct}}>
       {children}
     </ProductContext.Provider>
   );
