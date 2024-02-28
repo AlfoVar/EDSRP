@@ -38,6 +38,7 @@ export const ProductProvider = ({ children }) => {
   const updateProduct = async (id, updatedProduct) => {
     try {
       const response = await updateProducts(id, updatedProduct);
+      fetchProducts();
       return response.data;
     } catch (error) {
       throw error;

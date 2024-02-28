@@ -35,8 +35,8 @@ export const updateProductById = async (req, res) => {
     description,
     stock,
   };
-  await Products.findByIdAndUpdate(req.params.id, productUpdate);
-  res.json({ status: "Producto Actualizado" });
+  const resUpdateProduct = await Products.findByIdAndUpdate(req.params.id, productUpdate, { new: true });
+  res.json(resUpdateProduct);
 };
 
 export const deleteProduct = async (req, res) => {

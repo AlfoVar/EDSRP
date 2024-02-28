@@ -36,6 +36,7 @@ export const PumpContextProvider = (props) => {
     try {
       const response = await createPump(newPump);
       setPumps([...pumps, response.data]);
+      fetchPumps();
       return response.data;
     } catch (error) {
       throw error

@@ -42,7 +42,7 @@ export const ClosingContextProvider = ({ children }) => {
     try {
       const response = await createClosing(closingData);
       setClosings((prevClosingData) => [...prevClosingData, response.data]);
-      console.log(response.data);
+      fetchClosing();
       return response.data;
     } catch (error) {
      throw error

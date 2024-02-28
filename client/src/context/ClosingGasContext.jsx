@@ -48,7 +48,7 @@ export const ClosingGasProvider = ({ children }) => {
         ...prevClosingGasData,
         response.data,
       ]);
-      console.log(response.data);
+      fetchClosingGas();
       return response.data;
     } catch (error) {
       throw error

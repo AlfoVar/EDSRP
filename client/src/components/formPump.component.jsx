@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 const FormPump = ({
   id,
   prevRecord,
+  costGas,
   setPrevRecord,
   closeRecordValidate,
   dateValue,
@@ -12,8 +13,7 @@ const FormPump = ({
 }) => {
   const [soldGallons, setSoldGallons] = useState(0);
   const [gallonSale, setGallonSale] = useState(0);
-  const [closeRecord, setCloseRecord] = useState(0);;
-  const costGas = 14650;
+  const [closeRecord, setCloseRecord] = useState(0);
 
   const pumpLogics = (prev, closed) => {
     setGallonSale(Number.parseFloat(closed - prev).toFixed(1));

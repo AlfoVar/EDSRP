@@ -4,18 +4,18 @@ import { usePump } from "../context/PumpContext.jsx";
 import { useClosing } from "../context/ClosingContext.jsx";
 import { useGrocerContext } from "../context/grocerContext.jsx";
 import { useClosingGasConstext } from "../context/ClosingGasContext.jsx";
+import { useProducts } from "../context/ProductContext.jsx";
 
 import DatePickerValue from "../components/datePicker.jsx";
 import SelectList from "../components/selectList.jsx";
 import dayjs from "dayjs";
-import { get } from "mongoose";
-import { Await } from "react-router-dom";
 
 const DailyPage = () => {
   const pumpsContext = usePump();
   const closingContext = useClosing();
   const grocerContext = useGrocerContext();
   const closingGasContext = useClosingGasConstext();
+  const productsContext = useProducts();
 
   const [prevRecord, setPrevRecord] = useState(0);
   const [totalGallons, setTotalGallons] = useState([]);
@@ -31,6 +31,10 @@ const DailyPage = () => {
   const [stockGasToday, setStockGasToday] = useState(0);
   const [stockAfterGast, setStockAfterGast] = useState(0);
   const [listPumpsIdsSaved, setListPumpsIdsSaved] = useState([{}]);
+  const [productData, setProductData] = useState([{}]);
+  const [gasProduct, setGasProduct] = useState({});
+  const [idGasProduct, setIdGasProduct] = useState(0);
+  const [costGas, setCostGas] = useState(0);	
 
   const [isToday, setIsToday] = useState(false);
 
@@ -60,6 +64,7 @@ const DailyPage = () => {
   };
 
   const gasStoreGallonsLogic = () => {
+    // console.log(stockAfterGast);
     const totalGasAfter = stockAfterGast - totalGallonsDay;
     setStockGasToday(totalGasAfter);
   };
@@ -69,101 +74,107 @@ const DailyPage = () => {
     var counter = 0;
     event.preventDefault();
     for (const [key, value] of Object.entries(dataPumps)) {
-      const res = await pumpsContext.addPump({
-        type: key,
-        currentRecordGallon: value.currentRecordGallon,
-        previousRecordGallon: value.previousRecordGallon,
-        gallonsSold: value.gallonsSold,
-        saleDay: value.saleDay,
-        currentGallonCost: value.currentGallonCost,
-      })
-      .then ( async res => {
-        const resId = await res.pump;
-        listPumpsIds.push(resId._id);
-      })
-      .catch( async error => {
-        console.log(error, "Se genero un problema guardando uno de los surtidores porfavor intente de nuevo.")
-        if (listPumpsIds.length > 0) {
-         await deleteData(listPumpsIds)
-        }
-      });
-      // if (res === "error") {
-      //   console.log("error", "Se genero un problema guardando uno de los surtidores porfavor intente de nuevo.")
-      //   if (listPumpsIds.length > 0) {
-      //     await deleteData(listPumpsIds)
-      //   }
-      //   break
-      // }
-      
+      const res = await pumpsContext
+        .addPump({
+          type: key,
+          currentRecordGallon: value.currentRecordGallon,
+          previousRecordGallon: value.previousRecordGallon,
+          gallonsSold: value.gallonsSold,
+          saleDay: value.saleDay,
+          currentGallonCost: value.currentGallonCost,
+        })
+        .then(async (res) => {
+          const resId = await res.pump;
+          listPumpsIds.push(resId._id);
+        })
+        .catch(async (error) => {
+          console.log(
+            error,
+            "Se genero un problema guardando uno de los surtidores porfavor intente de nuevo."
+          );
+          if (listPumpsIds.length > 0) {
+            await deleteData(listPumpsIds);
+          }
+        });
       counter++;
     }
     saveClosingGas(listPumpsIds);
   };
-  
+
   const deleteData = async (listPump, closingGasID, closingID) => {
     if (closingID) {
-      await closingGasContext.deleteGas(closingGasID)
-      console.log("Se elimino el cierre")
-    } 
+      await closingGasContext.deleteGas(closingGasID);
+      console.log("Se elimino el cierre");
+    }
     if (closingGasID) {
-      await closingGasContext.deleteGas(closingGasID)
-      console.log("Se elimino el cierre de gasolina")
-    } 
+      await closingGasContext.deleteGas(closingGasID);
+      console.log("Se elimino el cierre de gasolina");
+    }
     if (listPump.length > 0) {
       for (let pumpId of listPump) {
         await pumpsContext.deletePump(pumpId);
-        console.log( "Se eliminaron las mangeras")
-      }  
+        console.log("Se eliminaron las mangeras");
+      }
     }
-    return
-  }
+    return;
+  };
+
+  const updateGasProduct = async () => {
+    console.log(stockGasToday, "stockGasToday");
+    await productsContext
+      .updateProduct(idGasProduct, { stock: stockGasToday })
+      .then((res) => {
+        console.log("Se actualizo el stock de gasolina");
+        return true;
+      })
+      .catch(async (error) => {
+        console.log("Se genero un error actualizando el stock de gasolina");
+        return false;
+      });
+  };
 
   const saveClosingGas = async (listPump) => {
-    await closingGasContext.addClosingGasData({
-      Pumps: listPump,
-      stockBeforeGas: stockAfterGast,
-      totalGallonsSoldDay: totalGallonsDay,
-      stockAfterGas: stockGasToday,
-      cashInBoxGas: totalSaleDay,
-    })
-    .then( async res => {
-      console.log("Se guardo el cierre de gasolina")
-      await saveClosingDay(listPump, res._id);
-      return res
-    })
-    .catch(async err => {
-      await deleteData(listPump)
-      console.log(" Se genero un error guardando el cierre de gasolina")
-      return
-    });
+    await closingGasContext
+      .addClosingGasData({
+        Pumps: listPump,
+        stockBeforeGas: stockAfterGast,
+        totalGallonsSoldDay: totalGallonsDay,
+        stockAfterGas: stockGasToday,
+        cashInBoxGas: totalSaleDay,
+      })
+      .then(async (res) => {
+        console.log("Se guardo el cierre de gasolina");
+        await saveClosingDay(listPump, res._id);
+        return res;
+      })
+      .catch(async (err) => {
+        await deleteData(listPump);
+        console.log(" Se genero un error guardando el cierre de gasolina");
+        return;
+      });
   };
 
   const saveClosingDay = async (listPump, gasId) => {
-    await closingContext.addClosing({
-      grocer: valueGrocer,
-      date: dateValue.format("YYYY-MM-DD"),
-      gas: gasId,
-      closingProducts:[],
-      closingTotalDay: 7315660,
-      cashValueToday:  7213000 , 
-      surplusOfDay: 102340 
-    })
-    .then(res => {
-      console.log(res);
-    })
-    .catch(async error => {
-      await deleteData(listPump, gasId)
-      console.log(" Se genero un error guardando el cierre")
-      return
-    });
-    // if (res === "error") {
-    //   await deleteData(listPump, gasId)
-    //   console.log("Se genero un error guardando el cierre")
-    //   return
-    // }
-    
+    await closingContext
+      .addClosing({
+        grocer: valueGrocer,
+        date: dateValue.format("YYYY-MM-DD"),
+        gas: gasId,
+        closingProducts: [],
+        closingTotalDay: 7315660,
+        cashValueToday: 7213000,
+        surplusOfDay: 102340,
+      })
+      .then((res) => {
+        console.log(res);
+        updateGasProduct();
+      })
+      .catch(async (error) => {
+        await deleteData(listPump, gasId);
+        console.log(" Se genero un error guardando el cierre");
+        return;
+      });
   };
-
 
   const getPumpsCreated = async () => {
     const dataPumps = await pumpsContext.getPumps();
@@ -207,6 +218,13 @@ const DailyPage = () => {
     setClosingData(dataDate);
   };
 
+  const filterGasProduct = () => {
+    const prueba = productData.filter((product) => {
+      return product.idProduct === "GAS";
+    });
+    return prueba;
+  };
+
   const validateDataClosingDate = (data) => {
     const dateToday = new Date(dateValue.format("YYYY-MM-DD"));
     const dateYesterday = new Date(
@@ -225,22 +243,24 @@ const DailyPage = () => {
 
   useEffect(() => {
     validateDataClosingDate(closingContext.closings);
+    setProductData(productsContext.products);
+    setGasProduct(filterGasProduct());
     setGasClosingData();
     gasStoreGallonsLogic();
-    if (dataGas && dataGas.length > 0) {
-      //  console.log(dataGas)
-      for (let gas of dataGas) {
-        setStockAfterGast(gas.stockAfterGas);
+    if (gasProduct && gasProduct.length > 0) {
+      for (let product of gasProduct) {
+        setStockAfterGast(product.stock);
+        setIdGasProduct(product._id);
+        setCostGas(product.currentCost);
       }
     }
-    // getGasClosing();
-    //setDataGrocer(grocerContext);
   }, [
     listPumpsIdsSaved,
     dataGas,
     closingGasContext,
     closingContext,
     pumpsContext,
+    productsContext,
     dateValue,
     dataPumps,
     isToday,
@@ -268,7 +288,7 @@ const DailyPage = () => {
                     Cierre Diario
                   </h1>
                   <p className="mt-1 text-sm leading-6 text-white-600">
-                    Surtidores Costo galon gasolina $14650
+                    Surtidores Costo galon gasolina ${costGas}
                   </p>
                   {getGas.Pumps.map((pump, i) => {
                     return (
@@ -290,6 +310,7 @@ const DailyPage = () => {
                         onTotalSaleChange={handleTotalSaleChange}
                         onTotalGallonsChange={handleTotalGallonsChange}
                         dateValue={dateValue.format("YYYY-MM-DD")}
+                        costGas={costGas}
                       />
                     );
                   })}
