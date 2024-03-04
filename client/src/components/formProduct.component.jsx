@@ -1,7 +1,11 @@
 import { set } from "mongoose";
 import React, { useState } from "react";
 
-const FormProduct = ({ setDataProducts, createNewProduct }) => {
+const FormProduct = ({
+  setDataProducts,
+  createNewProduct,
+  isCreateNewProduct,
+}) => {
   const [formData, setFormData] = useState({
     nameProduct: "",
     description: "",
@@ -20,15 +24,14 @@ const FormProduct = ({ setDataProducts, createNewProduct }) => {
     e.preventDefault();
   };
 
-  useState(() => {
-  }, [formData, setDataProducts, createNewProduct]);
+  useState(() => {}, [formData, setDataProducts, createNewProduct]);
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="p-5">
-        <div className="mt-7 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-          <div className="sm:col-span-1">
-            <label className="block text-sm font-medium leading-6 text-white-900">
+    <div className="flex justify-center">
+      <div className="w-full max-w-lg p-5 border border-gray-300 rounded-lg shadow-md">
+        <form onSubmit={handleSubmit} className="grid gap-2">
+          <div className="flex items-center">
+            <label className="font-bold flex-1">
               Nombre del Producto:
             </label>
             <input
@@ -36,11 +39,11 @@ const FormProduct = ({ setDataProducts, createNewProduct }) => {
               value={formData.nameProduct}
               onChange={handleChange}
               required={true}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className="flex-2 p-2 border border-gray-300 rounded box-border"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium leading-6 text-white-900">
+          <div className="flex items-center">
+            <label className="font-bold flex-1">
               Descripción:
             </label>
             <textarea
@@ -49,11 +52,11 @@ const FormProduct = ({ setDataProducts, createNewProduct }) => {
               value={formData.description}
               onChange={handleChange}
               required={true}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className="flex-2 p-4 border border-gray-300 rounded box-border"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium leading-6 text-white-900">
+          <div className="flex items-center">
+            <label className="font-bold flex-1">
               Id del Producto:
             </label>
             <input
@@ -61,11 +64,11 @@ const FormProduct = ({ setDataProducts, createNewProduct }) => {
               value={formData.idProduct}
               onChange={handleChange}
               required={true}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className="flex-2 p-2 border border-gray-300 rounded box-border"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium leading-6 text-white-900">
+          <div className="flex items-center">
+            <label className="font-bold flex-1">
               Costo actual del Producto:
             </label>
             <input
@@ -74,11 +77,11 @@ const FormProduct = ({ setDataProducts, createNewProduct }) => {
               value={formData.currentCost}
               onChange={handleChange}
               required={true}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className="flex-2 p-2 border border-gray-300 rounded box-border"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium leading-6 text-white-900">
+          <div className="flex items-center">
+            <label className="font-bold flex-1">
               Stock actual del producto:
             </label>
             <input
@@ -87,16 +90,19 @@ const FormProduct = ({ setDataProducts, createNewProduct }) => {
               value={formData.stock}
               onChange={handleChange}
               required={true}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className="flex-2 p-2 border border-gray-300 rounded box-border"
             />
           </div>
           <br />
-          <button onClick={createNewProduct} type="submit">
+          <button onClick={createNewProduct} type="submit" className="w-full p-2 bg-blue-500 text-white border-none rounded cursor-pointer transition-colors duration-300 ease-in-out">
             guardar
           </button>
-        </div>
+          <button onClick={() => isCreateNewProduct(false)} type="submit" className="w-full p-2 bg-blue-500 text-white border-none rounded cursor-pointer transition-colors duration-300 ease-in-out">
+            Cancelar
+          </button>
+        </form>
       </div>
-    </form>
+    </div>
   );
 };
 

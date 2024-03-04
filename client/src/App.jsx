@@ -13,6 +13,7 @@ import RegisterPage from "./pages/RegisterPage";
 import DailyPage from "./pages/DailyPage";
 import ProductsPage from "./pages/ProductsPage";
 import ProtectedRoute from "./ProtectedRoute";
+import Navbar from "./components/navbar";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <ClosingGasProvider>
               <GrocerProvider>
                 <ProductProvider>
+                  <Navbar />
                 <Routes>
                   <Route path="/" element={<h1>Home Page</h1>} />
                   <Route path="/login" element={<LoginPage />} />

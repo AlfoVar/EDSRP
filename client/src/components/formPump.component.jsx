@@ -60,14 +60,13 @@ const FormPump = ({
   ]);
 
   return (
-    <form>
-      <div className="p-5">
-        <p className="mt-2 text-sm leading-6 text-white-600">
+      <div className="border-2 border-gray-900 my-2 p-2 rounded-lg">
+        <p className="mt-0 text-sm leading-6 text-white-600">
           Mangera {id} = {`$${Intl.NumberFormat().format(soldGallons)}`}
         </p>
-        <div className="mt-7 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div className="mt-7 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-4">
           <div className="sm:col-span-1">
-            <label className="block text-sm font-medium leading-6 text-white-900">
+            <label className="block mb-1 font-bold">
               Registro Anterior
             </label>
             <div className="mt-2">
@@ -79,13 +78,13 @@ const FormPump = ({
                 onChange={(e) => {
                   handleInputChange(e, setPrevRecord);
                 }}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="w-full p-2 border border-gray-300 rounded box-border"
               />
             </div>
           </div>
 
           <div className="sm:col-span-1">
-            <label className="block text-sm font-medium leading-6 text-white-900">
+            <label className="block mb-1 font-bold">
               Registro Cierre
             </label>
             <div className="mt-2">
@@ -97,30 +96,28 @@ const FormPump = ({
                 onChange={(e) => {
                   handleInputChange(e, setCloseRecord);
                 }}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
+                className="w-full p-2 border border-gray-300 rounded box-border"
               />
             </div>
           </div>
 
           <div className="sm:col-span-1">
-            <label className="block text-sm font-medium leading-6 text-white-900">
+            <label className="block mb-1 font-bold">
               Venta Galones
             </label>
-            <div className="mt-2">{Intl.NumberFormat().format(gallonSale)}</div>
+            <div className="w-full p-2 border border-gray-300 rounded box-border">{Intl.NumberFormat().format(gallonSale)}</div>
           </div>
 
           <div className="sm:col-span-1">
-            <label className="block text-sm font-medium leading-6 text-white-900">
+            <label className="block mb-1 font-bold">
               Venta
             </label>
-            <div className="mt-2">
+            <div className="w-full p-2 border border-gray-300 rounded box-border">
               {`$${Intl.NumberFormat().format(soldGallons)}`}
             </div>
           </div>
         </div>
       </div>
-      {/* <button onClick={saveRegisterPump} className=''>Guardar</button> */}
-    </form>
   );
 };
 export default FormPump;

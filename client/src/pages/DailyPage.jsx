@@ -6,6 +6,11 @@ import { useGrocerContext } from "../context/grocerContext.jsx";
 import { useClosingGasConstext } from "../context/ClosingGasContext.jsx";
 import { useProducts } from "../context/ProductContext.jsx";
 
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+
 import DatePickerValue from "../components/datePicker.jsx";
 import SelectList from "../components/selectList.jsx";
 import dayjs from "dayjs";
@@ -34,7 +39,8 @@ const DailyPage = () => {
   const [productData, setProductData] = useState([{}]);
   const [gasProduct, setGasProduct] = useState({});
   const [idGasProduct, setIdGasProduct] = useState(0);
-  const [costGas, setCostGas] = useState(0);	
+  const [costGas, setCostGas] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const [isToday, setIsToday] = useState(false);
 
@@ -192,6 +198,7 @@ const DailyPage = () => {
       const getGas = closing.gas;
       return getGas;
     });
+
     setDataGas(gasData);
     return gasData;
   };
@@ -238,6 +245,7 @@ const DailyPage = () => {
     } else {
       setIsToday(false);
       setDataValidateForDate(isYesterdayData);
+      setStockAfterGast(totalGallonsDay);
     }
   };
 
@@ -247,9 +255,18 @@ const DailyPage = () => {
     setGasProduct(filterGasProduct());
     setGasClosingData();
     gasStoreGallonsLogic();
+
     if (gasProduct && gasProduct.length > 0) {
       for (let product of gasProduct) {
-        setStockAfterGast(product.stock);
+        if (!isToday) {
+          setStockAfterGast(product.stock);
+        } else {
+          if (dataGas.length > 0) {
+            for (let gas of dataGas) {
+              setStockAfterGast(gas.stockBeforeGas);
+            }
+          }
+        }
         setIdGasProduct(product._id);
         setCostGas(product.currentCost);
       }
@@ -268,91 +285,118 @@ const DailyPage = () => {
 
   return (
     <div>
-      <DatePickerValue
-        setDateValue={setDateValue}
-        onChange={getClosingDataContext}
-      />
-      <SelectList
-        listValue={grocerContext}
-        value={valueGrocer}
-        setValue={setValueGrocer}
-      />
-      {dataValidateForDate.map((closing, i) => {
-        const getGas = closing.gas;
-        return (
-          <div key={i}>
-            <form>
-              <div className="space-y-12 p-10">
-                <div className="border-b border-gray-900/10 pb-12">
+      <form className="max-w-4xl mx-auto p-5 bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out">
+        <h1 className="text-base font-semibold leading-8 text-white-900">
+          Cierre Diario
+        </h1>
+        <DatePickerValue
+          setDateValue={setDateValue}
+          onChange={getClosingDataContext}
+        />
+        {dataValidateForDate.map((closing, i) => {
+          const getGas = closing.gas;
+          return (
+            <>
+              <Accordion defaultExpanded>
+                <AccordionSummary
+                  expandIcon={<ArrowDownwardIcon />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                >
                   <h1 className="text-base font-semibold leading-8 text-white-900">
-                    Cierre Diario
+                    {closing.grocer.nameGrocer}
                   </h1>
-                  <p className="mt-1 text-sm leading-6 text-white-600">
-                    Surtidores Costo galon gasolina ${costGas}
-                  </p>
-                  {getGas.Pumps.map((pump, i) => {
-                    return (
-                      <FormPump
-                        key={i}
-                        id={pump.type}
-                        onChange={handlePumpDataChange}
-                        prevRecord={
-                          isToday
-                            ? pump.previousRecordGallon
-                            : pump.currentRecordGallon
-                        }
-                        setPrevRecord={setPrevRecord}
-                        closeRecordValidate={
-                          isToday ? pump.currentRecordGallon : 0
-                        }
-                        totalGallonsSale={setTotalGallonsDay}
-                        totalSale={setTotalSaleDay}
-                        onTotalSaleChange={handleTotalSaleChange}
-                        onTotalGallonsChange={handleTotalGallonsChange}
-                        dateValue={dateValue.format("YYYY-MM-DD")}
-                        costGas={costGas}
-                      />
-                    );
-                  })}
-                  <div>
-                    <div className="sm:col-span-1">
-                      <label className="block text-sm font-medium leading-6 text-white-900">
-                        Galones vendidos
-                      </label>
-                      <div className="mt-2">
-                        {Intl.NumberFormat().format(totalGallonsDay.toFixed(1))}
-                      </div>
-                    </div>
-                    <div className="sm:col-span-1">
-                      <label className="block text-sm font-medium leading-6 text-white-900">
-                        Arqueo
-                      </label>
-                      <div className="mt-2">
-                        {Intl.NumberFormat().format(stockGasToday.toFixed(1))}
-                      </div>
-                    </div>
-                    <div className="sm:col-span-1">
-                      <label className="block text-sm font-medium leading-6 text-white-900">
-                        Venta total del dia
-                      </label>
-                      <div className="mt-2">
-                        {Intl.NumberFormat().format(totalSaleDay)}
+                </AccordionSummary>
+                <AccordionDetails>
+                  {/* <button
+                onClick={(event) => {
+                  event.preventDefault();
+                  setIsExpanded(!isExpanded);
+                }}
+              >
+                {isExpanded ? "Contraer" : "Expandir"}
+              </button> */}
+                  <div
+                    className={`border-2 border-gray-900 my-2 p-2 rounded-lg `}
+                    key={i}
+                  >
+                    <SelectList
+                      listValue={grocerContext}
+                      value={valueGrocer}
+                      setValue={setValueGrocer}
+                    />
+                    <div className="space-y-12 p-10">
+                      <div className="border-b border-gray-900/10 pb-12">
+                        <p className="mt-1 leading-6 text-white-600">
+                          Costo actual del galon gasolina:{" "}
+                          <span className="text-red-500 mb-1 font-bold">
+                            ${costGas}
+                          </span>
+                        </p>
+                        {getGas.Pumps.map((pump, i) => {
+                          return (
+                            <FormPump
+                              key={i}
+                              id={pump.type}
+                              onChange={handlePumpDataChange}
+                              prevRecord={
+                                isToday
+                                  ? pump.previousRecordGallon
+                                  : pump.currentRecordGallon
+                              }
+                              setPrevRecord={setPrevRecord}
+                              closeRecordValidate={
+                                isToday ? pump.currentRecordGallon : 0
+                              }
+                              totalGallonsSale={setTotalGallonsDay}
+                              totalSale={setTotalSaleDay}
+                              onTotalSaleChange={handleTotalSaleChange}
+                              onTotalGallonsChange={handleTotalGallonsChange}
+                              dateValue={dateValue.format("YYYY-MM-DD")}
+                              costGas={costGas}
+                            />
+                          );
+                        })}
+                        <div className="border-2 border-gray-900 my-2 p-2 rounded-lg">
+                          <label className="w-1/2 mb-1 font-bold">
+                            Galones vendidos
+                          </label>
+                          <div className="w-1/2 my-1 ">
+                            {Intl.NumberFormat().format(
+                              totalGallonsDay.toFixed(1)
+                            )}
+                          </div>
+                          <label className="w-1/2 mb-1 font-bold ">
+                            Arqueo
+                          </label>
+                          <div className="w-1/2 my-1">
+                            {Intl.NumberFormat().format(
+                              stockGasToday.toFixed(1)
+                            )}
+                          </div>
+                          <label className="w-1/2 mb-1 font-bold ">
+                            Venta total del dia
+                          </label>
+                          <div className="w-1/2 my-1">
+                            {Intl.NumberFormat().format(totalSaleDay)}
+                          </div>
+                        </div>
+                        <button
+                          disabled={isToday ? true : false}
+                          onClick={saveRegisterPump}
+                          className="w-full my-1 p-2 bg-green-500 hover:bg-green-700 text-white border-none rounded cursor-pointer text-lg"
+                        >
+                          Guardar
+                        </button>
                       </div>
                     </div>
                   </div>
-                  <button
-                    disabled={isToday ? true : false}
-                    onClick={saveRegisterPump}
-                    className=""
-                  >
-                    Guardar
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        );
-      })}
+                </AccordionDetails>
+              </Accordion>
+            </>
+          );
+        })}
+      </form>
     </div>
   );
 };

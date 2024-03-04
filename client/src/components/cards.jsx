@@ -23,8 +23,8 @@ const ActionAreaCard = ({
   isIncomeProduct,
   localFormData,
   setLocalFormData,
+  deleteProduct,
 }) => {
-  const productImage = image;
 
   const [stockProduct, setStockProduct] = useState(0);
   const [editedProducts, setEditedProducts] = useState(0);
@@ -53,16 +53,8 @@ const ActionAreaCard = ({
     setEditedProducts(e.target.value);
     setIsIncomeValidate(true);
   }
-
-  console.log(isIncomeValidate, "isIncomeValidate");
   useEffect(() => {
     setStockProduct(stock);
-
-    // setFormData({
-    //   ...formData,
-    //   stock: stockProduct,
-    //   currentCost: price,
-    // });
   }, [nameProduct, formData, price, stock]);
 
   return (
@@ -71,7 +63,7 @@ const ActionAreaCard = ({
         <CardMedia
           component="img"
           sx={{ height: 140, width: 368 }}
-          image={productImage}
+          image={image}
           alt={image}
         />
         <CardContent>
@@ -98,7 +90,7 @@ const ActionAreaCard = ({
             />
           ) : (
             <Typography variant="body2" sx={{ mb: 0.5 }} color="text.secondary">
-              {`$${price}`}
+              {price !== null && price !== undefined ?`${price}` : 'Cargando...'}
             </Typography>
           )}
           <Typography variant="h7">Stock:</Typography>
@@ -113,7 +105,7 @@ const ActionAreaCard = ({
             />
           ) : (
             <Typography variant="body2" sx={{ mb: 0.5 }} color="text.secondary">
-              {Intl.NumberFormat().format(stockProduct.toFixed(1))}
+              {stockProduct !== null && stockProduct !== undefined ? Intl.NumberFormat().format(stockProduct.toFixed(1)) : 'Cargando...'}
             </Typography>
           )}
           {isIncome ? (
@@ -140,7 +132,7 @@ const ActionAreaCard = ({
               Editar
             </Button>
           )}
-          {isEdited || isIncome ? null : (<Button size="small">Eliminar</Button>) }
+          {isEdited || isIncome ? null : (<Button onClick={() => deleteProduct(id)} size="small">Eliminar</Button>) }
           <Button onClick={() => isIncomeProduct(id, true)} size="small">
             Ingreso
           </Button>

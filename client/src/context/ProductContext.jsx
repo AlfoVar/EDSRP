@@ -45,13 +45,23 @@ export const ProductProvider = ({ children }) => {
     }
   }
 
+  const deleteProductData = async (id) => {
+    try {
+      const response = await deleteProductsData(id);
+      fetchProducts();
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Fetch products from the API
   useEffect(() => {
     fetchProducts();
   }, []);
 
   return (
-    <ProductContext.Provider value={{products, addProduct, updateProduct}}>
+    <ProductContext.Provider value={{products, addProduct, updateProduct, deleteProductData}}>
       {children}
     </ProductContext.Provider>
   );

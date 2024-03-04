@@ -29,8 +29,8 @@ const ProductsPage = () => {
     // Añade más productos e imágenes aquí
   };
 
-  const isCreateNewProduct = () => {
-    setIsCreateProduct(true);
+  const isCreateNewProduct = (validation) => {
+    setIsCreateProduct(validation);
   };
 
   const createNewProduct = async () => {
@@ -65,7 +65,10 @@ const ProductsPage = () => {
 
   const editProduct = async (id, isIncome) => {
     if (isIncome) {
-      const editProductData = await productsContext.updateProduct(id, localFormData);
+      const editProductData = await productsContext.updateProduct(
+        id,
+        localFormData
+      );
       if (editProductData) {
         isEditProduct(id, false);
       }
@@ -77,50 +80,75 @@ const ProductsPage = () => {
     }
   };
 
+  const deleteProduct = async (id) => {
+    if (window.confirm('Esta seguro que desea eliminar el producto?')) {
+      const deleteProductData = await productsContext.deleteProductData(id);
+      if (deleteProductData) {
+        console.log(deleteProductData);
+      }
+    }
+  };
+
   useEffect(() => {
     setProducts(productsContext.products);
   }, [productsContext, newProduct, formData]);
   return (
-    <div>
+    <div className="font-sans m-0 p-0">
       <div>
-        <h1>Products</h1>
-        <button onClick={isCreateNewProduct}>Crear nuevo Producto</button>
-        <div />
+        <header className="bg-gray-900 text-white text-center py-5 uppercase">
+          <h1 className="m-0">Productos</h1>
+        </header>
+        {isCreateProduct ? null :
+        <div className="flex justify-center outline-2">
+          <button
+            onClick={()=>isCreateNewProduct(true)}
+            className="p-2 bg-blue-500 text-white border-2 rounded cursor-pointer transition-colors duration-300 ease-in-out"
+          >
+            Crear nuevo Producto
+          </button>
+        </div>
+        }
         {isCreateProduct ? (
           <FormProduct
             setDataProducts={setNewProduct}
             createNewProduct={createNewProduct}
+            isCreateNewProduct={isCreateNewProduct}
           />
         ) : null}
-      </div>
-      {products.map((product) => {
-        const image = productImages[product.idProduct];
-        const isIncome = incomeData[product._id];
-        const isEdited = editedProducts[product._id];
-        return (
-          <div id={product._id} className="p-5 inline-block">
-            <Card
-              key={product.id}
-              image={image}
-              id={product._id}
-              nameProduct={product.nameProduct}
-              desciption={product.description}
-              price={product.currentCost}
-              formData={formData}
-              setFormData={setFormData}
-              stock={product.stock}
-              editProduct={editProduct}
-              setProducts={productsContext}
-              isEdited={isEdited}
-              isEditProduct={isEditProduct}
-              isIncome={isIncome}
-              isIncomeProduct={isIncomeProduct}
-              localFormData={localFormData}
-              setLocalFormData={setLocalFormData}
-            />
+        <div className="p-5">
+          <div className="flex flex-wrap justify-around">
+            {products.map((product) => {
+              const image = productImages[product.idProduct];
+              const isIncome = incomeData[product._id];
+              const isEdited = editedProducts[product._id];
+              return (
+                <div id={product._id}>
+                  <Card
+                    key={product.id}
+                    image={image}
+                    id={product._id}
+                    nameProduct={product.nameProduct}
+                    desciption={product.description}
+                    price={product.currentCost}
+                    formData={formData}
+                    setFormData={setFormData}
+                    stock={product.stock}
+                    editProduct={editProduct}
+                    setProducts={productsContext}
+                    isEdited={isEdited}
+                    isEditProduct={isEditProduct}
+                    isIncome={isIncome}
+                    isIncomeProduct={isIncomeProduct}
+                    localFormData={localFormData}
+                    setLocalFormData={setLocalFormData}
+                    deleteProduct={deleteProduct}
+                  />
+                </div>
+              );
+            })}
           </div>
-        );
-      })}
+        </div>
+      </div>
     </div>
   );
 };
