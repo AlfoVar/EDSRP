@@ -54,7 +54,7 @@
             "stockAfter": 24
         }
     ],
-    "closingTotalDay": 12720150,
-    "cashValueTody": 10320000,
-    "surplusOfDay": 212850
+    "closingTotalDay": 12720150, //valor total del cierre
+    "cashValueTody": 10320000, //valor total en efectivo
+    "surplusOfDay": 212850 //sobrante del dia
 }

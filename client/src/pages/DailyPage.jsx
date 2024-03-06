@@ -31,7 +31,7 @@ const DailyPage = () => {
   const [totalSaleDay, setTotalSaleDay] = useState(0);
   const [closingData, setClosingData] = useState([]);
   const [valueGrocer, setValueGrocer] = useState("");
-  const [dataGas, setDataGas] = useState([{}]);
+  const [dataGas, setDataGas] = useState({});
   const [dataGasId, setDataGasId] = useState(0);
   const [stockGasToday, setStockGasToday] = useState(0);
   const [stockAfterGast, setStockAfterGast] = useState(0);
@@ -41,6 +41,18 @@ const DailyPage = () => {
   const [idGasProduct, setIdGasProduct] = useState(0);
   const [costGas, setCostGas] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [formData, setFormData] = useState({
+    grocer: "",
+    date: "",
+    gas: "",
+    closingProducts: [],
+    closingTotalDay: 0,
+    cashValueToday: 0,
+    surplusOfDay: 0,
+  });
+  const [isDataClosingSet, setIsDataClosingSet] = useState(true);
+  const [prevDateValue, setPrevDateValue] = useState(dateValue);
+  // const [isNewClosing, setIsNewClosing] = useState(false);//
 
   const [isToday, setIsToday] = useState(false);
 
@@ -70,12 +82,13 @@ const DailyPage = () => {
   };
 
   const gasStoreGallonsLogic = () => {
-    // console.log(stockAfterGast);
+    //  console.log(stockAfterGast, "stockAfterGast");
     const totalGasAfter = stockAfterGast - totalGallonsDay;
     setStockGasToday(totalGasAfter);
   };
 
   const saveRegisterPump = async (event) => {
+    console.log("hola");
     var listPumpsIds = [];
     var counter = 0;
     event.preventDefault();
@@ -193,12 +206,29 @@ const DailyPage = () => {
     }
   };
 
+  const newAddClosing = (e) => {
+    e.preventDefault();
+    console.log(valueGrocer, "valueGrocer");
+    const newPumpsData = {
+      grocer: dataValidateForDate[0].grocer,
+      date: dateValue.format("YYYY-MM-DD"),
+      gas: dataValidateForDate[0].gas,
+      closingProducts: [],
+      closingTotalDay: 7315660,
+      cashValueToday: 7213000,
+      surplusOfDay: 102340,
+    };
+    console.log(dataGas[0], "newPumpsData");
+    setFormData(newPumpsData);
+    dataValidateForDate.push(formData);
+    console.log(dataValidateForDate);
+  };
+
   const setGasClosingData = async () => {
     const gasData = dataValidateForDate.map((closing, i) => {
       const getGas = closing.gas;
       return getGas;
     });
-
     setDataGas(gasData);
     return gasData;
   };
@@ -239,13 +269,22 @@ const DailyPage = () => {
     );
     const isTodayData = filterByDate(data, dateToday);
     const isYesterdayData = filterByDate(data, dateYesterday);
-    if (isTodayData.length > 0) {
-      setIsToday(true);
-      setDataValidateForDate(isTodayData);
-    } else {
-      setIsToday(false);
-      setDataValidateForDate(isYesterdayData);
-      setStockAfterGast(totalGallonsDay);
+    // console.log(isDataClosingSet, "isDataClosingSet")
+    if (isDataClosingSet || prevDateValue !== dateValue) {
+      if (isTodayData.length > 0) {
+        setIsToday(true);
+        setDataValidateForDate(isTodayData);
+        setIsDataClosingSet(false);
+      } else {
+        setIsToday(false);
+        if (isYesterdayData.length > 0) {
+          setDataValidateForDate([isYesterdayData[isYesterdayData.length - 1]]);
+        }else{
+          setDataValidateForDate([])
+        }
+        setStockAfterGast(totalGallonsDay);
+        setIsDataClosingSet(false);
+      }
     }
   };
 
@@ -255,6 +294,7 @@ const DailyPage = () => {
     setGasProduct(filterGasProduct());
     setGasClosingData();
     gasStoreGallonsLogic();
+    setPrevDateValue(dateValue);
 
     if (gasProduct && gasProduct.length > 0) {
       for (let product of gasProduct) {
@@ -263,7 +303,13 @@ const DailyPage = () => {
         } else {
           if (dataGas.length > 0) {
             for (let gas of dataGas) {
-              setStockAfterGast(gas.stockBeforeGas);
+              for ( let data of dataValidateForDate ){
+                if (data._id == undefined) {
+                  setStockAfterGast(gas.stockAfterGas);
+                }else{
+                  setStockAfterGast(gas.stockBeforeGas);
+                }
+              }
             }
           }
         }
@@ -293,11 +339,12 @@ const DailyPage = () => {
           setDateValue={setDateValue}
           onChange={getClosingDataContext}
         />
+        {/* getGas?.Pumps && getGas.Pumps.length > 0 ? ( */}
         {dataValidateForDate.map((closing, i) => {
           const getGas = closing.gas;
           return (
             <>
-              <Accordion defaultExpanded>
+              <Accordion>
                 <AccordionSummary
                   expandIcon={<ArrowDownwardIcon />}
                   aria-controls="panel1-content"
@@ -308,14 +355,6 @@ const DailyPage = () => {
                   </h1>
                 </AccordionSummary>
                 <AccordionDetails>
-                  {/* <button
-                onClick={(event) => {
-                  event.preventDefault();
-                  setIsExpanded(!isExpanded);
-                }}
-              >
-                {isExpanded ? "Contraer" : "Expandir"}
-              </button> */}
                   <div
                     className={`border-2 border-gray-900 my-2 p-2 rounded-lg `}
                     key={i}
@@ -333,56 +372,74 @@ const DailyPage = () => {
                             ${costGas}
                           </span>
                         </p>
-                        {getGas.Pumps.map((pump, i) => {
-                          return (
-                            <FormPump
-                              key={i}
-                              id={pump.type}
-                              onChange={handlePumpDataChange}
-                              prevRecord={
-                                isToday
-                                  ? pump.previousRecordGallon
-                                  : pump.currentRecordGallon
-                              }
-                              setPrevRecord={setPrevRecord}
-                              closeRecordValidate={
-                                isToday ? pump.currentRecordGallon : 0
-                              }
-                              totalGallonsSale={setTotalGallonsDay}
-                              totalSale={setTotalSaleDay}
-                              onTotalSaleChange={handleTotalSaleChange}
-                              onTotalGallonsChange={handleTotalGallonsChange}
-                              dateValue={dateValue.format("YYYY-MM-DD")}
-                              costGas={costGas}
-                            />
-                          );
-                        })}
+                        {getGas?.Pumps && getGas.Pumps.length > 0 ? (
+                          getGas.Pumps.map((pump, i) => {
+                            return (
+                              <FormPump
+                                key={i}
+                                id={pump?.type}
+                                onChange={handlePumpDataChange}
+                                prevRecord={
+                                  isToday && closing._id != undefined
+                                    ? pump?.previousRecordGallon
+                                    : pump?.currentRecordGallon
+                                }
+                                setPrevRecord={setPrevRecord}
+                                closeRecordValidate={
+                                  isToday && closing._id != undefined
+                                    ? pump?.currentRecordGallon
+                                    : 0
+                                }
+                                totalGallonsSale={setTotalGallonsDay}
+                                totalSale={setTotalSaleDay}
+                                onTotalSaleChange={handleTotalSaleChange}
+                                onTotalGallonsChange={handleTotalGallonsChange}
+                                dateValue={dateValue.format("YYYY-MM-DD")}
+                                costGas={costGas}
+                              />
+                            );
+                          })
+                        ) : (
+                          <p>Loading...</p>
+                        )}
                         <div className="border-2 border-gray-900 my-2 p-2 rounded-lg">
                           <label className="w-1/2 mb-1 font-bold">
                             Galones vendidos
                           </label>
                           <div className="w-1/2 my-1 ">
-                            {Intl.NumberFormat().format(
-                              totalGallonsDay.toFixed(1)
-                            )}
+                            {isToday && closing._id != undefined
+                              ? Intl.NumberFormat().format(
+                                  closing.gas.totalGallonsSoldDay.toFixed(1)
+                                )
+                              : Intl.NumberFormat().format(
+                                  totalGallonsDay.toFixed(1)
+                                )}
                           </div>
                           <label className="w-1/2 mb-1 font-bold ">
                             Arqueo
                           </label>
                           <div className="w-1/2 my-1">
-                            {Intl.NumberFormat().format(
-                              stockGasToday.toFixed(1)
-                            )}
+                            {isToday && closing._id != undefined
+                              ? Intl.NumberFormat().format(
+                                  closing.gas.stockAfterGas.toFixed(1)
+                                )
+                              : Intl.NumberFormat().format(
+                                  stockGasToday.toFixed(1)
+                                )}
                           </div>
                           <label className="w-1/2 mb-1 font-bold ">
                             Venta total del dia
                           </label>
                           <div className="w-1/2 my-1">
-                            {Intl.NumberFormat().format(totalSaleDay)}
+                            ${" "}
+                            {isToday && closing._id != undefined
+                              ? Intl.NumberFormat().format(
+                                  closing.gas.cashInBoxGas
+                                )
+                              : Intl.NumberFormat().format(totalSaleDay)}
                           </div>
                         </div>
                         <button
-                          disabled={isToday ? true : false}
                           onClick={saveRegisterPump}
                           className="w-full my-1 p-2 bg-green-500 hover:bg-green-700 text-white border-none rounded cursor-pointer text-lg"
                         >
@@ -393,6 +450,14 @@ const DailyPage = () => {
                   </div>
                 </AccordionDetails>
               </Accordion>
+              {isToday ? (
+                <button
+                  onClick={newAddClosing}
+                  className="w-full my-1 p-2 bg-green-500 hover:bg-green-700 text-white border-none rounded cursor-pointer text-lg"
+                >
+                  Agregar un nuevo Cierre
+                </button>
+              ) : null}
             </>
           );
         })}
