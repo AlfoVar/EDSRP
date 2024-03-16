@@ -10,6 +10,12 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import Collapse from "@mui/material/Collapse";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import Box from "@mui/material/Box";
 
 import DatePickerValue from "../components/datePicker.jsx";
 import SelectList from "../components/selectList.jsx";
@@ -23,6 +29,7 @@ const DailyPage = () => {
   const productsContext = useProducts();
 
   const [prevRecord, setPrevRecord] = useState(0);
+  const [closingRecord, setClosingRecord] = useState(0);
   const [totalGallons, setTotalGallons] = useState([]);
   const [totalSale, setTotalSale] = useState(0);
   const [dateValue, setDateValue] = useState(dayjs());
@@ -32,7 +39,6 @@ const DailyPage = () => {
   const [closingData, setClosingData] = useState([]);
   const [valueGrocer, setValueGrocer] = useState("");
   const [dataGas, setDataGas] = useState({});
-  const [dataGasId, setDataGasId] = useState(0);
   const [stockGasToday, setStockGasToday] = useState(0);
   const [stockAfterGast, setStockAfterGast] = useState(0);
   const [listPumpsIdsSaved, setListPumpsIdsSaved] = useState([{}]);
@@ -40,7 +46,7 @@ const DailyPage = () => {
   const [gasProduct, setGasProduct] = useState({});
   const [idGasProduct, setIdGasProduct] = useState(0);
   const [costGas, setCostGas] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isTank, setIsTank] = useState(false);
   const [formData, setFormData] = useState({
     grocer: "",
     date: "",
@@ -52,7 +58,11 @@ const DailyPage = () => {
   });
   const [isDataClosingSet, setIsDataClosingSet] = useState(true);
   const [prevDateValue, setPrevDateValue] = useState(dateValue);
-  // const [isNewClosing, setIsNewClosing] = useState(false);//
+  const [valueDatePicker, setValueDatePicker] = React.useState(dayjs());
+  const [isChargeFirtsTime, setIsChargeFirtsTime] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [idsPumpError, setIdsPumpError] = useState([]);
+  const [isSelectError, setIsSelectError] = useState(false);
 
   const [isToday, setIsToday] = useState(false);
 
@@ -71,6 +81,7 @@ const DailyPage = () => {
       [id]: newTotal,
     }));
     setTotalGallonsDay(totalGallons[1] + totalGallons[2] + totalGallons[3]);
+    gasStoreGallonsLogic();
   };
 
   const handleTotalSaleChange = (id, newSaleTotal) => {
@@ -82,42 +93,95 @@ const DailyPage = () => {
   };
 
   const gasStoreGallonsLogic = () => {
-    //  console.log(stockAfterGast, "stockAfterGast");
     const totalGasAfter = stockAfterGast - totalGallonsDay;
     setStockGasToday(totalGasAfter);
+    if (gasProduct && gasProduct.length > 0) {
+      for (let product of gasProduct) {
+        if (!isToday) {
+          setStockAfterGast(product.stock);
+        } else {
+          if (dataGas.length > 0) {
+            for (let gas of dataGas) {
+              for (let data of dataValidateForDate) {
+                if (data._id == undefined) {
+                  setStockAfterGast(gas.stockAfterGas);
+                } else {
+                  setStockAfterGast(gas.stockBeforeGas);
+                }
+              }
+            }
+          }
+        }
+        setIdGasProduct(product._id);
+        setCostGas(product.currentCost);
+      }
+    }
+  };
+
+  const validationFields = () => {
+    let emptyFieldFound = false;
+    let invalidIds = [];
+
+    if (valueGrocer == "") {
+      setHasError(true);
+      setIsSelectError(true);
+      return false;
+    } else {
+      setIsSelectError(false);
+      setHasError(false);
+    }
+
+    Object.keys(dataPumps).forEach((key) => {
+      const pump = dataPumps[key];
+      if (!pump.currentRecordGallon) {
+        emptyFieldFound = true;
+        invalidIds.push(key);
+      }
+    });
+
+    setIdsPumpError(invalidIds);
+
+    if (emptyFieldFound) {
+      setHasError(true);
+      return false;
+    }
+
+    setHasError(false);
+    return true;
   };
 
   const saveRegisterPump = async (event) => {
-    console.log("hola");
     var listPumpsIds = [];
     var counter = 0;
-    event.preventDefault();
-    for (const [key, value] of Object.entries(dataPumps)) {
-      const res = await pumpsContext
-        .addPump({
-          type: key,
-          currentRecordGallon: value.currentRecordGallon,
-          previousRecordGallon: value.previousRecordGallon,
-          gallonsSold: value.gallonsSold,
-          saleDay: value.saleDay,
-          currentGallonCost: value.currentGallonCost,
-        })
-        .then(async (res) => {
-          const resId = await res.pump;
-          listPumpsIds.push(resId._id);
-        })
-        .catch(async (error) => {
-          console.log(
-            error,
-            "Se genero un problema guardando uno de los surtidores porfavor intente de nuevo."
-          );
-          if (listPumpsIds.length > 0) {
-            await deleteData(listPumpsIds);
-          }
-        });
-      counter++;
+    if (validationFields) {
+      event.preventDefault();
+      for (const [key, value] of Object.entries(dataPumps)) {
+        const res = await pumpsContext
+          .addPump({
+            type: key,
+            currentRecordGallon: value.currentRecordGallon,
+            previousRecordGallon: value.previousRecordGallon,
+            gallonsSold: value.gallonsSold,
+            saleDay: value.saleDay,
+            currentGallonCost: value.currentGallonCost,
+          })
+          .then(async (res) => {
+            const resId = await res.pump;
+            listPumpsIds.push(resId._id);
+          })
+          .catch(async (error) => {
+            console.log(
+              error,
+              "Se genero un problema guardando uno de los surtidores porfavor intente de nuevo."
+            );
+            if (listPumpsIds.length > 0) {
+              await deleteData(listPumpsIds);
+            }
+          });
+        counter++;
+      }
+      saveClosingGas(listPumpsIds);
     }
-    saveClosingGas(listPumpsIds);
   };
 
   const deleteData = async (listPump, closingGasID, closingID) => {
@@ -269,7 +333,6 @@ const DailyPage = () => {
     );
     const isTodayData = filterByDate(data, dateToday);
     const isYesterdayData = filterByDate(data, dateYesterday);
-    // console.log(isDataClosingSet, "isDataClosingSet")
     if (isDataClosingSet || prevDateValue !== dateValue) {
       if (isTodayData.length > 0) {
         setIsToday(true);
@@ -279,8 +342,8 @@ const DailyPage = () => {
         setIsToday(false);
         if (isYesterdayData.length > 0) {
           setDataValidateForDate([isYesterdayData[isYesterdayData.length - 1]]);
-        }else{
-          setDataValidateForDate([])
+        } else {
+          setDataValidateForDate([]);
         }
         setStockAfterGast(totalGallonsDay);
         setIsDataClosingSet(false);
@@ -289,61 +352,98 @@ const DailyPage = () => {
   };
 
   useEffect(() => {
+    console.log("hola")
     validateDataClosingDate(closingContext.closings);
     setProductData(productsContext.products);
     setGasProduct(filterGasProduct());
     setGasClosingData();
     gasStoreGallonsLogic();
+    setClosingRecord();
     setPrevDateValue(dateValue);
+    setDateValue(valueDatePicker);
 
-    if (gasProduct && gasProduct.length > 0) {
-      for (let product of gasProduct) {
-        if (!isToday) {
-          setStockAfterGast(product.stock);
-        } else {
-          if (dataGas.length > 0) {
-            for (let gas of dataGas) {
-              for ( let data of dataValidateForDate ){
-                if (data._id == undefined) {
-                  setStockAfterGast(gas.stockAfterGas);
-                }else{
-                  setStockAfterGast(gas.stockBeforeGas);
-                }
-              }
-            }
-          }
-        }
-        setIdGasProduct(product._id);
-        setCostGas(product.currentCost);
+
+    console.log(stockGasToday)
+    if (stockGasToday <= 2500) {
+      setIsTank(true);
+    }
+
+    const dataClosing = closingContext.closings;
+    let lastDate;
+    if (dataClosing.length > 0) {
+      const lastObject = dataClosing[dataClosing.length - 1];
+      lastDate = new Date(lastObject.date);
+      lastDate.setDate(lastDate.getDate() + 2);
+      if (!isChargeFirtsTime) {
+        setIsChargeFirtsTime(true);
+        setValueDatePicker(dayjs(lastDate));
       }
     }
   }, [
-    listPumpsIdsSaved,
-    dataGas,
-    closingGasContext,
     closingContext,
-    pumpsContext,
     productsContext,
     dateValue,
-    dataPumps,
+    valueDatePicker,
     isToday,
+    stockGasToday,
+    hasError,
   ]);
 
   return (
     <div>
-      <form className="max-w-4xl mx-auto p-5 bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out">
+      <Box sx={{ width: "25%", position: "fixed", padding: "1%" }}>
+        <Collapse
+          in={hasError}
+          timeout={200}
+          orientation="vertical"
+          sx={
+            {
+              // zIndex: -1,
+              // position: "fixed",
+              // padding: "1% 5%",
+              // borderRadius: "3px",
+            }
+          }
+        >
+          <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            No se pudo guardar El Cierre— <strong>Revisa los campos</strong>
+          </Alert>
+        </Collapse>
+        <Collapse in={isTank} timeout={200} orientation="vertical" sx={{}}>
+          <Alert
+            severity="warning"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setIsTank(false);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            <AlertTitle>Precaución</AlertTitle>
+            Nivel de Gasolina bajo <strong>Revisa el Stock de Gasolina</strong>
+          </Alert>
+        </Collapse>
+      </Box>
+
+      <div className="max-w-4xl mx-auto p-5 bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out">
         <h1 className="text-base font-semibold leading-8 text-white-900">
           Cierre Diario
         </h1>
         <DatePickerValue
-          setDateValue={setDateValue}
-          onChange={getClosingDataContext}
+          value={valueDatePicker}
+          setValue={setValueDatePicker}
         />
-        {/* getGas?.Pumps && getGas.Pumps.length > 0 ? ( */}
         {dataValidateForDate.map((closing, i) => {
           const getGas = closing.gas;
           return (
-            <>
+            <div key={i}>
               <Accordion>
                 <AccordionSummary
                   expandIcon={<ArrowDownwardIcon />}
@@ -360,6 +460,7 @@ const DailyPage = () => {
                     key={i}
                   >
                     <SelectList
+                      hasError={isSelectError}
                       listValue={grocerContext}
                       value={valueGrocer}
                       setValue={setValueGrocer}
@@ -390,12 +491,17 @@ const DailyPage = () => {
                                     ? pump?.currentRecordGallon
                                     : 0
                                 }
+                                closingRecord={closingRecord}
+                                setClosingRecord={setClosingRecord}
                                 totalGallonsSale={setTotalGallonsDay}
                                 totalSale={setTotalSaleDay}
                                 onTotalSaleChange={handleTotalSaleChange}
                                 onTotalGallonsChange={handleTotalGallonsChange}
                                 dateValue={dateValue.format("YYYY-MM-DD")}
                                 costGas={costGas}
+                                hasError={hasError}
+                                setHasError={setHasError}
+                                validatePumpsFields={idsPumpError}
                               />
                             );
                           })
@@ -440,7 +546,8 @@ const DailyPage = () => {
                           </div>
                         </div>
                         <button
-                          onClick={saveRegisterPump}
+                          // onClick={saveRegisterPump}
+                          onClick={validationFields}
                           className="w-full my-1 p-2 bg-green-500 hover:bg-green-700 text-white border-none rounded cursor-pointer text-lg"
                         >
                           Guardar
@@ -450,18 +557,18 @@ const DailyPage = () => {
                   </div>
                 </AccordionDetails>
               </Accordion>
-              {isToday ? (
-                <button
-                  onClick={newAddClosing}
-                  className="w-full my-1 p-2 bg-green-500 hover:bg-green-700 text-white border-none rounded cursor-pointer text-lg"
-                >
-                  Agregar un nuevo Cierre
-                </button>
-              ) : null}
-            </>
+            </div>
           );
         })}
-      </form>
+        {isToday && dataValidateForDate.length != 2 ? (
+          <button
+            onClick={newAddClosing}
+            className="w-full my-1 p-2 bg-green-500 hover:bg-green-700 text-white border-none rounded cursor-pointer text-lg"
+          >
+            Agregar un nuevo Cierre
+          </button>
+        ) : null}
+      </div>
     </div>
   );
 };

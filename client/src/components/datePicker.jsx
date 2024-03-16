@@ -5,9 +5,13 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-const DatePickerValue = ({setDateValue}) => {
-  const [value, setValue] = React.useState(dayjs())
-  setDateValue(value);
+const DatePickerValue = ({
+  setDateValue, 
+  setValue, 
+  value
+}) => {
+  // const [value, setValue] = React.useState(dayjs())
+  // setDateValue(value);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
