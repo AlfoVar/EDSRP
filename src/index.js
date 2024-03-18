@@ -51,5 +51,8 @@ app.listen(app.get('port'), () =>{
   console.log(`sever on port ${(app.get('port'))}`)
 });
 
+// mongoose.connection.db.command({ dbStats: 1 }, function(err, result) {
+//   console.log('Database size: ', result.dataSize);
+// });
 
 

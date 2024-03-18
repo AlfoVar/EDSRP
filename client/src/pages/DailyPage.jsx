@@ -153,7 +153,7 @@ const DailyPage = () => {
   const saveRegisterPump = async (event) => {
     var listPumpsIds = [];
     var counter = 0;
-    if (validationFields) {
+    if (validationFields()) {
       event.preventDefault();
       for (const [key, value] of Object.entries(dataPumps)) {
         const res = await pumpsContext
@@ -352,7 +352,6 @@ const DailyPage = () => {
   };
 
   useEffect(() => {
-    console.log("hola")
     validateDataClosingDate(closingContext.closings);
     setProductData(productsContext.products);
     setGasProduct(filterGasProduct());
@@ -362,9 +361,7 @@ const DailyPage = () => {
     setPrevDateValue(dateValue);
     setDateValue(valueDatePicker);
 
-
-    console.log(stockGasToday)
-    if (stockGasToday <= 2500) {
+    if (stockGasToday <= 2000) {
       setIsTank(true);
     }
 
@@ -396,14 +393,9 @@ const DailyPage = () => {
           in={hasError}
           timeout={200}
           orientation="vertical"
-          sx={
-            {
-              // zIndex: -1,
-              // position: "fixed",
-              // padding: "1% 5%",
-              // borderRadius: "3px",
-            }
-          }
+          sx={{
+            marginBottom: "10px"
+          }}
         >
           <Alert severity="error">
             <AlertTitle>Error</AlertTitle>
@@ -426,13 +418,13 @@ const DailyPage = () => {
               </IconButton>
             }
           >
-            <AlertTitle>Precaución</AlertTitle>
-            Nivel de Gasolina bajo <strong>Revisa el Stock de Gasolina</strong>
+            <AlertTitle>Atencion</AlertTitle>
+            Nivel de Gasolina por debajo de 2000 Galones<strong>Revisa el Stock de Gasolina</strong>
           </Alert>
         </Collapse>
       </Box>
 
-      <div className="max-w-4xl mx-auto p-5 bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out">
+      <div className="max-w-4xl mx-auto p-5 bg-custom-bg-grey rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out">
         <h1 className="text-base font-semibold leading-8 text-white-900">
           Cierre Diario
         </h1>
@@ -444,7 +436,7 @@ const DailyPage = () => {
           const getGas = closing.gas;
           return (
             <div key={i}>
-              <Accordion>
+              <Accordion sx={{borderRadius: "30px", marginTop: "10px"}}>
                 <AccordionSummary
                   expandIcon={<ArrowDownwardIcon />}
                   aria-controls="panel1-content"
@@ -456,7 +448,7 @@ const DailyPage = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                   <div
-                    className={`border-2 border-gray-900 my-2 p-2 rounded-lg `}
+                    className={` border-2 border-gray-900 my-2 p-2 rounded-lg `}
                     key={i}
                   >
                     <SelectList
@@ -546,9 +538,9 @@ const DailyPage = () => {
                           </div>
                         </div>
                         <button
-                          // onClick={saveRegisterPump}
-                          onClick={validationFields}
-                          className="w-full my-1 p-2 bg-green-500 hover:bg-green-700 text-white border-none rounded cursor-pointer text-lg"
+                          onClick={saveRegisterPump}
+                          // onClick={validationFields}
+                          className="w-full my-1 p-2  bg-custom-bg-bluegrey text-white border-none rounded cursor-pointer text-lg"
                         >
                           Guardar
                         </button>
@@ -563,7 +555,7 @@ const DailyPage = () => {
         {isToday && dataValidateForDate.length != 2 ? (
           <button
             onClick={newAddClosing}
-            className="w-full my-1 p-2 bg-green-500 hover:bg-green-700 text-white border-none rounded cursor-pointer text-lg"
+            className="w-full my-1 p-2 bg-custom-bg-bluegrey text-white border-none rounded cursor-pointer text-lg"
           >
             Agregar un nuevo Cierre
           </button>

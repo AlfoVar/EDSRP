@@ -81,7 +81,7 @@ const ProductsPage = () => {
   };
 
   const deleteProduct = async (id) => {
-    if (window.confirm('Esta seguro que desea eliminar el producto?')) {
+    if (window.confirm("Esta seguro que desea eliminar el producto?")) {
       const deleteProductData = await productsContext.deleteProductData(id);
       if (deleteProductData) {
         console.log(deleteProductData);
@@ -95,25 +95,27 @@ const ProductsPage = () => {
   return (
     <div className="font-sans m-0 p-0">
       <div>
-        <header className="bg-gray-900 text-white text-center py-5 uppercase">
+        <header className=" py-5 uppercase text-center font-bold text-4xl" >
           <h1 className="m-0">Productos</h1>
         </header>
-        {isCreateProduct ? null :
-        <div className="flex justify-center outline-2">
-          <button
-            onClick={()=>isCreateNewProduct(true)}
-            className="p-2 bg-blue-500 text-white border-2 rounded cursor-pointer transition-colors duration-300 ease-in-out"
-          >
-            Crear nuevo Producto
-          </button>
-        </div>
-        }
+        {isCreateProduct ? null : (
+          <div className="flex justify-center outline-2">
+            <button
+              onClick={() => isCreateNewProduct(true)}
+              className="p-2 bg-blue-500 text-white border-2 rounded cursor-pointer transition-colors duration-300 ease-in-out"
+            >
+              Crear nuevo Producto
+            </button>
+          </div>
+        )}
         {isCreateProduct ? (
-          <FormProduct
-            setDataProducts={setNewProduct}
-            createNewProduct={createNewProduct}
-            isCreateNewProduct={isCreateNewProduct}
-          />
+          <div className="p-2 mt-2">
+            <FormProduct
+              setDataProducts={setNewProduct}
+              createNewProduct={createNewProduct}
+              isCreateNewProduct={isCreateNewProduct}
+            />
+          </div>
         ) : null}
         <div className="p-5">
           <div className="flex flex-wrap justify-around">
@@ -122,7 +124,7 @@ const ProductsPage = () => {
               const isIncome = incomeData[product._id];
               const isEdited = editedProducts[product._id];
               return (
-                <div id={product._id}>
+                <div id={product._id} key={product._id}>
                   <Card
                     key={product.id}
                     image={image}
