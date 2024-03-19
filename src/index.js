@@ -4,6 +4,10 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import cookie from "cookie-parser";
 import cors from 'cors';
+import {
+  CLIENT_URL,
+  PORT
+} from './config.js';
 
 
 import productsRouter from './routes/product.routes.js';
@@ -23,11 +27,11 @@ const app = express();
 
 
 //setings
-app.set('port', process.env.PORT || 3000);
+app.set('port', PORT);
 
 //Middlewares
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: CLIENT_URL,
   credentials: true
 }));
 app.use(morgan('dev'));

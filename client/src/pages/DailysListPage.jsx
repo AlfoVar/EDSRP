@@ -43,7 +43,6 @@ function getComparator(order, orderBy) {
 }
 
 function stableSort(array, comparator) {
-  console.log(array, comparator);
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -91,7 +90,6 @@ function EnhancedTableHead(props) {
     rowCount,
     onRequestSort,
   } = props;
-  console.log(props, "props")
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -275,8 +273,6 @@ const DailysListPage = () => {
       ),
     [order, orderBy, page, rowsPerPage, dailys]
   );
-
-  console.log(dailys);
 
   useEffect(() => {
     setDailys(closingContext.closings);

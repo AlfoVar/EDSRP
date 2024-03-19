@@ -126,7 +126,6 @@ const ProductsPage = () => {
               return (
                 <div id={product._id} key={product._id}>
                   <Card
-                    key={product.id}
                     image={image}
                     id={product._id}
                     nameProduct={product.nameProduct}

@@ -1,14 +1,7 @@
 import mongoose from "mongoose";
+import {URLMONGO} from './config.js';
 
-mongoose.set("debug", true);
-
-let dbQueryCount = 0;
-
-mongoose.set("debug", (collectionName, method, query, doc) => {
-  dbQueryCount++;
-});
-
-const URI = "mongodb://127.0.0.1/EDSRP";
+const URI = URLMONGO;
 
 mongoose
   .connect(URI)

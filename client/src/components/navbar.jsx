@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -19,10 +19,13 @@ const theme = createTheme({
 const Navbar = () => {
   const { logout, isAuthenticated, errors: AuthErrors } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    if (!isAuthenticated) navigate("/login");
-  });
+    if (isAuthenticated === false && location.pathname !== '/login') {
+      navigate("/login");
+    }
+  }, [isAuthenticated, location.pathname]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -39,22 +42,22 @@ const Navbar = () => {
           </Typography>
           {isAuthenticated ? (
             <ul className="flex gap-x-2 ">
-            <li>
-              <Button color="inherit">
-                <Link to="/daily">Crear cierre</Link>
-              </Button>
-            </li>
-            <li>
-              <Button color="inherit">
-                <Link to="/products">Productos</Link>
-              </Button>
-            </li>
-            <li>
-              <Button color="inherit">
-                <Link to="/listdailys">Cierres</Link>
-              </Button>
-            </li>
-          </ul>
+              <li>
+                <Button color="inherit">
+                  <Link to="/daily">Crear cierre</Link>
+                </Button>
+              </li>
+              <li>
+                <Button color="inherit">
+                  <Link to="/products">Productos</Link>
+                </Button>
+              </li>
+              <li>
+                <Button color="inherit">
+                  <Link to="/listdailys">Cierres</Link>
+                </Button>
+              </li>
+            </ul>
           ) : null}
           {isAuthenticated ? (
             <Button color="inherit">
