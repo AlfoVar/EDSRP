@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import {URLMONGO} from './config.js';
 
-const URI = URLMONGO;
+const URI = `${URLMONGO}/EDSRP`;
 
 mongoose
   .connect(URI)
