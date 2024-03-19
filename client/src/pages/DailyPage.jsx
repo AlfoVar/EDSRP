@@ -61,6 +61,7 @@ const DailyPage = () => {
   const [valueDatePicker, setValueDatePicker] = React.useState(dayjs());
   const [isChargeFirtsTime, setIsChargeFirtsTime] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [hasSucces, setHasSucces] = useState(false);
   const [idsPumpError, setIdsPumpError] = useState([]);
   const [isSelectError, setIsSelectError] = useState(false);
 
@@ -170,10 +171,6 @@ const DailyPage = () => {
             listPumpsIds.push(resId._id);
           })
           .catch(async (error) => {
-            console.log(
-              error,
-              "Se genero un problema guardando uno de los surtidores porfavor intente de nuevo."
-            );
             if (listPumpsIds.length > 0) {
               await deleteData(listPumpsIds);
             }
@@ -187,16 +184,13 @@ const DailyPage = () => {
   const deleteData = async (listPump, closingGasID, closingID) => {
     if (closingID) {
       await closingGasContext.deleteGas(closingGasID);
-      console.log("Se elimino el cierre");
     }
     if (closingGasID) {
       await closingGasContext.deleteGas(closingGasID);
-      console.log("Se elimino el cierre de gasolina");
     }
     if (listPump.length > 0) {
       for (let pumpId of listPump) {
         await pumpsContext.deletePump(pumpId);
-        console.log("Se eliminaron las mangeras");
       }
     }
     return;
@@ -207,11 +201,9 @@ const DailyPage = () => {
     await productsContext
       .updateProduct(idGasProduct, { stock: stockGasToday })
       .then((res) => {
-        console.log("Se actualizo el stock de gasolina");
         return true;
       })
       .catch(async (error) => {
-        console.log("Se genero un error actualizando el stock de gasolina");
         return false;
       });
   };
@@ -226,13 +218,11 @@ const DailyPage = () => {
         cashInBoxGas: totalSaleDay,
       })
       .then(async (res) => {
-        console.log("Se guardo el cierre de gasolina");
         await saveClosingDay(listPump, res._id);
         return res;
       })
       .catch(async (err) => {
         await deleteData(listPump);
-        console.log(" Se genero un error guardando el cierre de gasolina");
         return;
       });
   };
@@ -251,10 +241,10 @@ const DailyPage = () => {
       .then((res) => {
         console.log(res);
         updateGasProduct();
+        setHasSucces(true);
       })
       .catch(async (error) => {
         await deleteData(listPump, gasId);
-        console.log(" Se genero un error guardando el cierre");
         return;
       });
   };
@@ -272,7 +262,6 @@ const DailyPage = () => {
 
   const newAddClosing = (e) => {
     e.preventDefault();
-    console.log(valueGrocer, "valueGrocer");
     const newPumpsData = {
       grocer: dataValidateForDate[0].grocer,
       date: dateValue.format("YYYY-MM-DD"),
@@ -282,7 +271,6 @@ const DailyPage = () => {
       cashValueToday: 7213000,
       surplusOfDay: 102340,
     };
-    console.log(dataGas[0], "newPumpsData");
     setFormData(newPumpsData);
     dataValidateForDate.push(formData);
     console.log(dataValidateForDate);
@@ -361,7 +349,7 @@ const DailyPage = () => {
     setPrevDateValue(dateValue);
     setDateValue(valueDatePicker);
 
-    if (stockGasToday <= 2000) {
+    if (stockGasToday <= 2000 && totalGallonsDay != 0) {
       setIsTank(true);
     }
 
@@ -390,11 +378,38 @@ const DailyPage = () => {
     <div>
       <Box sx={{ width: "25%", position: "fixed", padding: "1%" }}>
         <Collapse
+          in={hasSucces}
+          timeout={200}
+          orientation="vertical"
+          sx={{
+            marginBottom: "10px",
+          }}
+        >
+          <Alert
+            severity="success"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setHasSucces(false);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            <AlertTitle>Bien!!</AlertTitle>
+            Se ha guardado el cierre corectamente
+          </Alert>
+        </Collapse>
+        <Collapse
           in={hasError}
           timeout={200}
           orientation="vertical"
           sx={{
-            marginBottom: "10px"
+            marginBottom: "10px",
           }}
         >
           <Alert severity="error">
@@ -419,7 +434,8 @@ const DailyPage = () => {
             }
           >
             <AlertTitle>Atencion</AlertTitle>
-            Nivel de Gasolina por debajo de 2000 Galones<strong>Revisa el Stock de Gasolina</strong>
+            Nivel de Gasolina por debajo de 2000 Galones
+            <strong> Revisa el Stock de Gasolina</strong>
           </Alert>
         </Collapse>
       </Box>
@@ -436,7 +452,7 @@ const DailyPage = () => {
           const getGas = closing.gas;
           return (
             <div key={i}>
-              <Accordion sx={{borderRadius: "30px", marginTop: "10px"}}>
+              <Accordion sx={{ borderRadius: "30px", marginTop: "10px" }}>
                 <AccordionSummary
                   expandIcon={<ArrowDownwardIcon />}
                   aria-controls="panel1-content"

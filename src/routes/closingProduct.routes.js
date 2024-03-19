@@ -6,17 +6,18 @@ import {
   createClosingProduct,
   deleteClosingProduct,
 } from "../controller/closingProduct.controller.js";
+import { authValidationToken } from "../middlewares/validateToken.js";
 
 const router = Router();
 // Define your routes here
-router.get("/", getAllClosingProducts);
+router.get("/", authValidationToken, getAllClosingProducts);
 
-router.get("/:id", getClosingProductById);
+router.get("/:id", authValidationToken, getClosingProductById);
 
-router.post("/", createClosingProduct);
+router.post("/", authValidationToken, createClosingProduct);
 
-router.put("/:id", updateClosingProduct);
+router.put("/:id", authValidationToken, updateClosingProduct);
 
-router.delete("/:id", deleteClosingProduct);
+router.delete("/:id", authValidationToken, deleteClosingProduct);
 
 export default router;

@@ -4,6 +4,7 @@ import {
   getClosingDataByDate,
   createClosing,
 } from "../api/closing";
+import { useAuth } from './AuthContext';
 
 export const ClosingContext = createContext();
 
@@ -17,6 +18,8 @@ export const useClosing = () => {
 
 export const ClosingContextProvider = ({ children }) => {
   const [closings, setClosings] = useState([]);
+
+  const{ isAuthenticated } = useAuth();
 
   const fetchClosing = async () => {
     try {
@@ -49,19 +52,9 @@ export const ClosingContextProvider = ({ children }) => {
     }
   };
 
-  // const deleteGas = async (id) => {
-  //   try {
-  //     await deleteClosingGas(id);
-  //     setGasData(gasData.filter((gas) => gas._id !== id));
-  //   } catch (error) {
-  //     const errorData = error.response.data;
-  //     setErrors(errorData.message);
-  //   }
-  // };
-
   useEffect(() => {
-    fetchClosing();
-  }, []);
+    if(isAuthenticated) fetchClosing();
+  }, [isAuthenticated]);
 
   return (
     <ClosingContext.Provider

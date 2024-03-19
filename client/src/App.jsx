@@ -5,12 +5,13 @@ import { PumpContextProvider } from "./context/PumpContext";
 import { ClosingContextProvider } from "./context/ClosingContext";
 import { GrocerProvider } from "./context/grocerContext";
 import { ClosingGasProvider } from "./context/ClosingGasContext";
-import { ProductProvider } from './context/ProductContext';
+import { ProductProvider } from "./context/ProductContext";
 
 import AdminUsersPage from "./pages/AdminUsersPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DailyPage from "./pages/DailyPage";
+import ListDilys from './pages/DailysListPage';
 import ProductsPage from "./pages/ProductsPage";
 import ProtectedRoute from "./ProtectedRoute";
 import Navbar from "./components/navbar";
@@ -25,18 +26,18 @@ function App() {
               <GrocerProvider>
                 <ProductProvider>
                   <Navbar />
-                <Routes>
-                  <Route path="/" element={<h1>Home Page</h1>} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/daily" element={<DailyPage />} />
-                  <Route path="/products" element={<ProductsPage />} />
-                  <Route element={<ProtectedRoute />}>
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/adminuser" element={<AdminUsersPage />} />
-                    <Route path="/products" element={<ProductsPage />} />
-                    <Route path="/getdaily/:id" element={<DailyPage />} />
-                  </Route>
-                </Routes>
+                  <Routes>
+                    <Route path="/" element={<h1>Home Page</h1>} />
+                    <Route path="/login" element={<LoginPage />} />
+                      <Route path="/listdailys" element={<ListDilys />} />
+                    <Route element={<ProtectedRoute />}>
+                      <Route path="/daily" element={<DailyPage />} />
+                      <Route path="/products" element={<ProductsPage />} />
+                      <Route path="/register" element={<RegisterPage />} />
+                      <Route path="/adminuser" element={<AdminUsersPage />} />
+                      <Route path="/getdaily/:id" element={<DailyPage />} />
+                    </Route>
+                  </Routes>
                 </ProductProvider>
               </GrocerProvider>
             </ClosingGasProvider>

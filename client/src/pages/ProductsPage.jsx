@@ -102,7 +102,7 @@ const ProductsPage = () => {
           <div className="flex justify-center outline-2">
             <button
               onClick={() => isCreateNewProduct(true)}
-              className="p-2 bg-blue-500 text-white border-2 rounded cursor-pointer transition-colors duration-300 ease-in-out"
+              className="p-2 bg-custom-bg-red text-white border-2 rounded cursor-pointer transition-colors duration-300 ease-in-out"
             >
               Crear nuevo Producto
             </button>

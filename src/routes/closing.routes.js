@@ -1,19 +1,20 @@
 import express from 'express';
 import { createClosing, getAllClosings, getClosingsByDate, getClosingById, updateClosingById, deleteClosingById } from '../controller/closing.controller.js';
+import { authValidationToken } from "../middlewares/validateToken.js";
 
 const router = express.Router();
 
 // Define your routes here
-router.get('/', getAllClosings);
+router.get('/', authValidationToken, getAllClosings);
 
-router.get('/date/:date', getClosingsByDate);
+router.get('/date/:date', authValidationToken, getClosingsByDate);
 
-router.get('/:id', getClosingById);
+router.get('/:id', authValidationToken, getClosingById);
 
-router.post('/', createClosing);
+router.post('/', authValidationToken, createClosing);
 
-router.put('/:id', updateClosingById);
+router.put('/:id', authValidationToken, updateClosingById);
 
-router.delete('/:id', deleteClosingById);
+router.delete('/:id', authValidationToken, deleteClosingById);
 
 export default router;

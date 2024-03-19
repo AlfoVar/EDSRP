@@ -6,17 +6,18 @@ import {
   updateClosingGasById,
   deleteClosingGasById,
 } from "../controller/closingGas.controller.js";
+import { authValidationToken } from "../middlewares/validateToken.js";
 
 const router = Router();
 // Define your routes here
-router.get("/", getAllClosingGas);
+router.get("/", authValidationToken, getAllClosingGas);
 
-router.get("/:id", getClosingGasById);
+router.get("/:id" , authValidationToken, getClosingGasById);
 
-router.post("/", createClosingGas);
+router.post("/", authValidationToken, createClosingGas);
 
-router.put("/:id", updateClosingGasById);
+router.put("/:id", authValidationToken, updateClosingGasById);
 
-router.delete("/:id", deleteClosingGasById);
+router.delete("/:id", authValidationToken, deleteClosingGasById);
 
 export default router;

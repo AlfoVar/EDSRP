@@ -6,11 +6,6 @@ let dbQueryCount = 0;
 
 mongoose.set("debug", (collectionName, method, query, doc) => {
   dbQueryCount++;
-  console.log(
-    `Query number ${dbQueryCount}: ${collectionName}.${method}`,
-    JSON.stringify(query),
-    doc
-  );
 });
 
 const URI = "mongodb://127.0.0.1/EDSRP";
@@ -22,7 +17,6 @@ mongoose
 
 mongoose.connection.on("open", function () {
   mongoose.connection.db.command({ dbStats: 1 }, function (err, result) {
-    console.log("Database size: ", result.dataSize);
   });
 });
 export default mongoose;

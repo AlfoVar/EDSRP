@@ -5,6 +5,7 @@ import {
   getClosingGasById,
   deleteClosingGas
 } from "../api/closingGas";
+import { useAuth } from './AuthContext';
 
 // Create the ClosingGasContext
 export const ClosingGasContext = createContext();
@@ -21,6 +22,7 @@ export const useClosingGasConstext = () => {
 export const ClosingGasProvider = ({ children }) => {
   // Define the state for the ClosingGas API
   const [closingGasData, setClosingGasData] = useState([]);
+  const{ isAuthenticated } = useAuth();
 
   const fetchClosingGas = async () => {
     try {
@@ -41,7 +43,6 @@ export const ClosingGasProvider = ({ children }) => {
   };
 
   const addClosingGasData = async (closingGasData) => {
-    console.log(closingGasData);
     try {
       const response = await createClosingGas(closingGasData);
       setClosingGasData((prevClosingGasData) => [
@@ -65,8 +66,8 @@ export const ClosingGasProvider = ({ children }) => {
     };
 
   useEffect(() => {
-    fetchClosingGas();
-  }, []);
+    if(isAuthenticated) fetchClosingGas();
+  }, [isAuthenticated]);
   return (
     <ClosingGasContext.Provider
       value={{

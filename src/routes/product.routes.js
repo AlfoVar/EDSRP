@@ -7,14 +7,14 @@ const router = Router();
 //Esta es la forma para colocar la validacion del token en la llamadas a las rutas
 // --> router.get('/', authValidationToken, getProducts);
 
-router.get('/', getProducts);
+router.get('/', authValidationToken, getProducts);
 
-router.get('/:id', getProductById)
+router.get('/:id', authValidationToken, getProductById)
 
-router.post('/', addProduct)
+router.post('/', authValidationToken, addProduct)
 
-router.put('/:id', updateProductById)
+router.put('/:id', authValidationToken, updateProductById)
 
-router.delete('/:id', deleteProduct);
+router.delete('/:id', authValidationToken, deleteProduct);
 
 export default router;

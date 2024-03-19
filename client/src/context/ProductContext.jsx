@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import {getProducts, getProductsDataById, createProducts, updateProducts, deleteProductsData } from '../api/products';
-
+import { useAuth } from './AuthContext';
 // Create the ProductContext
 export const ProductContext = createContext();
 
@@ -15,6 +15,7 @@ export const useProducts = () => {
 // Create the ProductProvider component
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
+  const{ isAuthenticated } = useAuth();
 
   const fetchProducts = async () => {
     try {
@@ -57,8 +58,8 @@ export const ProductProvider = ({ children }) => {
 
   // Fetch products from the API
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    if(isAuthenticated) fetchProducts();
+  }, [isAuthenticated]);
 
   return (
     <ProductContext.Provider value={{products, addProduct, updateProduct, deleteProductData}}>

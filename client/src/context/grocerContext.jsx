@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getGrocers } from "../api/grocer";
+import { useAuth } from './AuthContext';
 
 // Create the context
 const GrocerContext = createContext();
@@ -8,6 +9,7 @@ const GrocerContext = createContext();
 export const GrocerProvider = ({ children }) => {
   // State and functions for grocer.js
   const [grocerState, setGrocerState] = useState([]);
+  const{ isAuthenticated } = useAuth();
 
   const fetchGrocers = async () => {
     try {
@@ -20,8 +22,8 @@ export const GrocerProvider = ({ children }) => {
 
   // useEffect and other logic for grocer.js
   useEffect(() => {
-    fetchGrocers();
-  }, []);
+   if(isAuthenticated) fetchGrocers();
+  }, [isAuthenticated]);
 
   return (
     <GrocerContext.Provider value={grocerState}>

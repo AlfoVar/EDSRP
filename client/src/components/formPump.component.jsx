@@ -33,7 +33,6 @@ const FormPump = ({
 
   const handleInputChange = (e, setState) => {
     const value = e.target.value;
-    console.log(value);
     if (value === "" || value === null || value === undefined || value === 0 || value.length < 6) {
       setHasError(true);
     } else {

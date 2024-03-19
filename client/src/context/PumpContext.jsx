@@ -1,5 +1,6 @@
 import React, { useState, useEffect, createContext } from "react";
 import {getPumpData, getPumpDataByDate, createPump, updatePumpData, deletePumpData} from '../api/pump';
+import { useAuth } from './AuthContext';
 
 export const PumpContext = createContext();
 
@@ -13,6 +14,8 @@ export const usePump = () => {
 
 export const PumpContextProvider = (props) => {
   const [pumps, setPumps] = useState([]);
+  
+  const{ isAuthenticated } = useAuth();
 
   const fetchPumps = async () => {
     try {
@@ -64,8 +67,8 @@ export const PumpContextProvider = (props) => {
   };
 
   useEffect(() => {
-    fetchPumps();
-  }, []);
+    if(isAuthenticated) fetchPumps();
+  }, [isAuthenticated]);
 
   return (
     <PumpContext.Provider value={{ 
