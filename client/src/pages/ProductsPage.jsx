@@ -5,7 +5,6 @@ import FormProduct from "../components/formProduct.component.jsx";
 import M2T from "../images/M2T.jpg";
 import GAS from "../images/GAS.jpeg";
 import E2TP from "../images/E2TP.jpg";
-import { set } from "mongoose";
 
 const ProductsPage = () => {
   const productsContext = useProducts();

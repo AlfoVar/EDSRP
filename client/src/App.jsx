@@ -29,11 +29,11 @@ function App() {
                   <Routes>
                     <Route path="/" element={<h1>Home Page</h1>} />
                     <Route path="/login" element={<LoginPage />} />
-                      <Route path="/listdailys" element={<ListDilys />} />
+                      <Route path="/register" element={<RegisterPage />} />
                     <Route element={<ProtectedRoute />}>
+                      <Route path="/listdailys" element={<ListDilys />} />
                       <Route path="/daily" element={<DailyPage />} />
                       <Route path="/products" element={<ProductsPage />} />
-                      <Route path="/register" element={<RegisterPage />} />
                       <Route path="/adminuser" element={<AdminUsersPage />} />
                       <Route path="/getdaily/:id" element={<DailyPage />} />
                     </Route>
