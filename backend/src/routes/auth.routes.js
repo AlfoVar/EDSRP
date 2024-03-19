@@ -6,7 +6,7 @@ import { authValidationToken } from "../middlewares/validateToken.js";
 
 const router = Router();
 
-router.post('/register', authValidationToken, validateSchema(registerSchema), addUser);
+router.post('/register'/*, authValidationToken*/, validateSchema(registerSchema), addUser);
 // router.post('/register', addUser);
 
 router.post('/login', validateSchema(loginSchema), loginUser);
